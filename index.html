@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#080808">
   <meta name="description" content="A personal, customizable AI workspace.">
   <script>
     try {
@@ -12,7 +12,7 @@
       }
     } catch (_) {}
   </script>
-  <title>kernel — personal workspace</title>
+  <title>kernel — personal AI workspace</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,7 @@
 </head>
 <body>
   <section id="entryGate" class="entry-gate relative isolate min-h-dvh overflow-hidden bg-black text-white" aria-labelledby="entryTitle">
+    <a class="skip-link" href="#entryForm">Skip to connection form</a>
     <div class="entry-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
     <div class="entry-halo pointer-events-none absolute inset-0" aria-hidden="true"></div>
     <div class="relative mx-auto flex min-h-dvh w-full max-w-[1600px] flex-col px-5 sm:px-8 lg:px-14">
@@ -49,21 +50,21 @@
           <div class="mt-12 grid max-w-[540px] grid-cols-1 gap-5 border-t border-white/[0.09] pt-6 sm:grid-cols-3 sm:gap-7">
             <div class="entry-feature">
               <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 5 6v5c0 4.5 2.9 7.7 7 10 4.1-2.3 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 5 6v5c0 4.5 2.9 7.7 7 10 4.1-2.3 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
               </span>
               <strong class="block text-[12px] font-medium text-white/85">Your key, your control</strong>
               <span class="mt-1 block text-[11px] leading-5 text-white/40">Stored in this browser. Never in the site files.</span>
             </div>
             <div class="entry-feature">
               <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 12h5M8 15h7"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 12h5M8 15h7"/></svg>
               </span>
               <strong class="block text-[12px] font-medium text-white/85">Built around you</strong>
               <span class="mt-1 block text-[11px] leading-5 text-white/40">Personality, memory, and your own agent files.</span>
             </div>
             <div class="entry-feature">
               <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
               </span>
               <strong class="block text-[12px] font-medium text-white/85">Provider flexible</strong>
               <span class="mt-1 block text-[11px] leading-5 text-white/40">TokenJuice by default. Other compatible APIs too.</span>
@@ -87,7 +88,7 @@
             <form id="entryForm" class="mt-8" novalidate>
               <label for="entryApiKey" class="mb-2 block text-[11px] font-medium text-white/75">API key</label>
               <div class="entry-key-field group relative flex h-[54px] items-center rounded-xl border border-white/[0.13] bg-[#030303] transition duration-200 focus-within:border-white/35 focus-within:shadow-[0_0_0_3px_rgba(255,255,255,.045)]">
-                <svg viewBox="0 0 24 24" class="ml-4 size-[17px] shrink-0 text-white/35" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="ml-4 size-[17px] shrink-0 text-white/35" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg>
                 <input id="entryApiKey" name="apiKey" type="password" required autocomplete="off" spellcheck="false" placeholder="Paste your API key" class="h-full min-w-0 flex-1 bg-transparent px-3 text-[13px] text-white outline-none placeholder:text-white/25" aria-label="API key">
                 <button id="entryToggleKey" type="button" class="mr-2 rounded-md px-2.5 py-1.5 text-[9px] font-semibold tracking-[0.12em] text-white/40 transition hover:bg-white/[0.06] hover:text-white/85" aria-label="Show API key">SHOW</button>
               </div>
@@ -96,7 +97,7 @@
               <details class="entry-advanced mt-6 border-t border-white/[0.08] pt-4">
                 <summary class="flex cursor-pointer list-none items-center justify-between text-[11px] text-white/45 transition hover:text-white/80">
                   <span>Advanced connection settings</span>
-                  <svg viewBox="0 0 24 24" class="entry-advanced-chevron size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m7 10 5 5 5-5"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="entry-advanced-chevron size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m7 10 5 5 5-5"/></svg>
                 </summary>
                 <div class="mt-4 grid gap-4">
                   <label class="grid gap-2 text-[10px] font-medium text-white/55" for="entryBaseUrl">API base URL
@@ -115,8 +116,8 @@
 
               <button id="entryConnectBtn" type="submit" class="entry-connect group mt-6 flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-[#f5f5f5] to-[#d9d9d9] px-5 text-[12px] font-semibold text-[#101010] shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_7px_25px_rgba(255,255,255,.055)] transition duration-200 hover:-translate-y-0.5 hover:from-white hover:to-[#e7e7e7] hover:shadow-[inset_0_1px_0_white,0_12px_30px_rgba(255,255,255,.09)] active:translate-y-0 disabled:cursor-wait disabled:opacity-60">
                 <span id="entryConnectLabel">Connect & open Kernel</span>
-                <svg id="entryConnectIcon" viewBox="0 0 24 24" class="size-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
-                <svg id="entryConnectSpinner" viewBox="0 0 24 24" class="hidden size-4 animate-spin" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+                <svg aria-hidden="true" id="entryConnectIcon" viewBox="0 0 24 24" class="size-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                <svg aria-hidden="true" id="entryConnectSpinner" viewBox="0 0 24 24" class="hidden size-4 animate-spin" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
               </button>
               <div id="entryStatus" class="entry-status mt-4 hidden rounded-lg border px-3.5 py-3 text-[11px] leading-5" role="status" aria-live="polite"></div>
             </form>
@@ -124,7 +125,7 @@
             <div class="mt-7 flex items-center justify-between border-t border-white/[0.08] pt-5">
               <div class="flex items-center gap-2.5">
                 <span class="inline-grid size-7 place-items-center rounded-lg border border-white/[0.09] bg-gradient-to-b from-white/[0.055] to-transparent text-white/55">
-                  <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="10" cy="18" r="1" fill="currentColor"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="10" cy="18" r="1" fill="currentColor"/></svg>
                 </span>
                 <div><div class="text-[10px] font-medium text-white/70">Default model</div><div class="mt-0.5 text-[9px] text-white/35">DeepSeek V4.1 Flash</div></div>
               </div>
@@ -167,21 +168,22 @@
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2"/></symbol>
   </svg>
   <div class="app-shell" id="appShell" hidden>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
     <aside class="sidebar" id="sidebar">
       <div class="side-top">
         <a class="brand" href="#" aria-label="kernel home">
-          <span class="brand-name">kernel</span>
+          <span class="brand-name" translate="no">kernel</span>
         </a>
-        <button class="icon-btn sidebar-collapse" id="collapseSidebar" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true"><svg class="ico"><use href="#i-panel-left"></use></svg></button>
-        <button class="icon-btn sidebar-close" id="closeSidebar" title="Close sidebar" aria-label="Close sidebar"><svg class="ico"><use href="#i-x"></use></svg></button>
+        <button class="icon-btn sidebar-collapse" id="collapseSidebar" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true"><svg aria-hidden="true" class="ico"><use href="#i-panel-left"></use></svg></button>
+        <button class="icon-btn sidebar-close" id="closeSidebar" title="Close sidebar" aria-label="Close sidebar"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button>
       </div>
-      <button class="new-chat-btn" id="newChatBtn" title="New chat" aria-label="New chat"><svg class="ico"><use href="#i-plus"></use></svg><span>New chat</span><kbd>Ctrl K</kbd></button>
-      <div class="sidebar-search" title="Search conversations"><span class="search-icon"><svg class="ico"><use href="#i-search"></use></svg></span><input id="chatSearch" type="search" placeholder="Search conversations" autocomplete="off" aria-label="Search conversations"></div>
-      <div class="side-section-label"><span>WORKSPACE</span><button class="tiny-icon" id="workspaceMenu" title="Workspace options"><svg class="ico"><use href="#i-more"></use></svg></button></div>
+      <button class="new-chat-btn" id="newChatBtn" title="New chat" aria-label="New chat"><svg aria-hidden="true" class="ico"><use href="#i-plus"></use></svg><span>New chat</span><kbd>Ctrl K</kbd></button>
+      <div class="sidebar-search" title="Search conversations"><span class="search-icon"><svg aria-hidden="true" class="ico"><use href="#i-search"></use></svg></span><input id="chatSearch" type="search" placeholder="Search conversations" autocomplete="off" aria-label="Search conversations"></div>
+      <div class="side-section-label"><span>WORKSPACE</span><button class="tiny-icon" id="workspaceMenu" title="Workspace options"><svg aria-hidden="true" class="ico"><use href="#i-more"></use></svg></button></div>
       <nav class="side-nav">
-        <button class="nav-item active" data-view="chats" title="Chats" aria-label="Chats"><span class="nav-glyph"><svg class="ico"><use href="#i-chat"></use></svg></span><span class="nav-label">Chats</span><span class="nav-count" id="chatCount">0</span></button>
-        <button class="nav-item" data-view="files" title="Agent files" aria-label="Agent files"><span class="nav-glyph"><svg class="ico"><use href="#i-file"></use></svg></span><span class="nav-label">Agent files</span></button>
-        <button class="nav-item" data-view="personality" title="Personality" aria-label="Personality"><span class="nav-glyph"><svg class="ico"><use href="#i-sliders"></use></svg></span><span class="nav-label">Personality</span></button>
+        <button class="nav-item active" data-view="chats" title="Chats" aria-label="Chats"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-chat"></use></svg></span><span class="nav-label">Chats</span><span class="nav-count" id="chatCount">0</span></button>
+        <button class="nav-item" data-view="files" title="Agent files" aria-label="Agent files"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg></span><span class="nav-label">Agent files</span></button>
+        <button class="nav-item" data-view="personality" title="Personality" aria-label="Personality"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg></span><span class="nav-label">Personality</span></button>
       </nav>
       <div class="history-head"><span>RECENTS</span><span class="history-line"></span></div>
       <div class="chat-list" id="chatList" aria-label="Recent conversations"></div>
@@ -189,25 +191,25 @@
         <div class="connection-card" id="connectionCard">
           <span class="connection-dot" id="connectionDot"></span>
           <div class="connection-copy"><strong id="connectionStatus">Not connected</strong><span id="connectionSub">Add an API key to begin</span></div>
-          <button class="tiny-icon" id="openSettingsFromStatus" title="Connection settings"><svg class="ico ico-sm"><use href="#i-arrow-up-right"></use></svg></button>
+          <button class="tiny-icon" id="openSettingsFromStatus" title="Connection settings"><svg aria-hidden="true" class="ico ico-sm"><use href="#i-arrow-up-right"></use></svg></button>
         </div>
         <button class="profile-button" id="profileButton" title="Settings & preferences" aria-label="Settings and preferences">
-          <span class="profile-glyph"><svg class="ico"><use href="#i-user"></use></svg></span>
+          <span class="profile-glyph"><svg aria-hidden="true" class="ico"><use href="#i-user"></use></svg></span>
           <span class="profile-copy"><strong>Local workspace</strong><small>Settings & preferences</small></span><span class="profile-more">···</span>
         </button>
       </div>
     </aside>
 
-    <main class="main-area">
+    <main class="main-area" id="mainContent" tabindex="-1">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="icon-btn mobile-menu" id="openSidebar" aria-label="Open sidebar"><svg class="ico"><use href="#i-menu"></use></svg></button>
+          <button class="icon-btn mobile-menu" id="openSidebar" aria-label="Open sidebar"><svg aria-hidden="true" class="ico"><use href="#i-menu"></use></svg></button>
           <div class="crumb"><span class="crumb-muted">workspace</span><span class="crumb-slash">/</span><strong id="currentTitle">new conversation</strong></div>
         </div>
         <div class="topbar-right">
-          <button class="model-pill" id="modelPill" title="Model settings"><span id="modelPillText">DeepSeek V4.1 Flash</span><svg class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
-          <button class="icon-btn top-icon" id="exportChatBtn" title="Export conversation" aria-label="Export conversation"><svg class="ico"><use href="#i-download"></use></svg></button>
-          <button class="icon-btn top-icon" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="ico"><use href="#i-settings"></use></svg></button>
+          <button class="model-pill" id="modelPill" title="Model settings"><span id="modelPillText">DeepSeek V4.1 Flash</span><svg aria-hidden="true" class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
+          <button class="icon-btn top-icon" id="exportChatBtn" title="Export conversation" aria-label="Export conversation"><svg aria-hidden="true" class="ico"><use href="#i-download"></use></svg></button>
+          <button class="icon-btn top-icon" id="settingsBtn" title="Settings" aria-label="Settings"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg></button>
         </div>
       </header>
 
@@ -218,12 +220,12 @@
           <h1>What are we working on?<br><span>Start anywhere.</span></h1>
           <p class="welcome-sub">A quieter place to think, build, and figure things out.<br>Your workspace, configured around the way you work.</p>
           <div class="suggestion-grid">
-            <button class="suggestion-card" data-prompt="Help me think through an idea from first principles."><span class="suggestion-icon"><svg class="ico"><use href="#i-lightbulb"></use></svg></span><span><strong>Think it through</strong><small>Explore an idea from first principles</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Help me build a practical plan for a project I have in mind."><span class="suggestion-icon"><svg class="ico"><use href="#i-list"></use></svg></span><span><strong>Make a plan</strong><small>Turn a rough idea into clear next steps</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Review this code carefully. Explain what matters and suggest improvements."><span class="suggestion-icon"><svg class="ico"><use href="#i-code"></use></svg></span><span><strong>Work on code</strong><small>Debug, design, and iterate</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Teach me a topic in a way that builds real understanding."><span class="suggestion-icon"><svg class="ico"><use href="#i-book"></use></svg></span><span><strong>Learn something</strong><small>Build understanding, not just notes</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Help me think through an idea from first principles."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-lightbulb"></use></svg></span><span><strong>Think it through</strong><small>Explore an idea from first principles</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Help me build a practical plan for a project I have in mind."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-list"></use></svg></span><span><strong>Make a plan</strong><small>Turn a rough idea into clear next steps</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Review this code carefully. Explain what matters and suggest improvements."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-code"></use></svg></span><span><strong>Work on code</strong><small>Debug, design, and iterate</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Teach me a topic in a way that builds real understanding."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-book"></use></svg></span><span><strong>Learn something</strong><small>Build understanding, not just notes</small></span><span class="suggestion-arrow">↗</span></button>
           </div>
-          <div class="welcome-foot"><span class="mini-shield"><svg class="ico"><use href="#i-lock"></use></svg></span> Your chats and settings stay in this browser <button class="welcome-connect" id="welcomeConnect">Connect API key ↗</button></div>
+          <div class="welcome-foot"><span class="mini-shield"><svg aria-hidden="true" class="ico"><use href="#i-lock"></use></svg></span> Your chats and settings stay in this browser <button class="welcome-connect" id="welcomeConnect">Connect API key ↗</button></div>
         </div>
         <div class="messages" id="messages" hidden></div>
       </section>
@@ -234,8 +236,8 @@
           <textarea id="promptInput" rows="1" placeholder="Message kernel…" aria-label="Message"></textarea>
           <div class="composer-bottom">
             <div class="composer-tools">
-              <button class="composer-tool" id="attachBtn" title="Attach files"><svg class="ico"><use href="#i-paperclip"></use></svg><span>Attach</span></button>
-              <button class="composer-tool effort-control" id="effortBtn" title="Thinking effort"><svg class="ico"><use href="#i-sliders"></use></svg><span id="effortLabel">High effort</span><svg class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
+              <button class="composer-tool" id="attachBtn" title="Attach files"><svg aria-hidden="true" class="ico"><use href="#i-paperclip"></use></svg><span>Attach</span></button>
+              <button class="composer-tool effort-control" id="effortBtn" title="Thinking effort"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span id="effortLabel">High effort</span><svg aria-hidden="true" class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
               <div class="effort-menu" id="effortMenu" hidden>
                 <div class="menu-kicker">REASONING</div>
                 <button data-effort="none"><span class="effort-dot"></span><span><strong>Off</strong><small>Fast answers, no thinking mode</small></span><span class="menu-check"></span></button>
@@ -244,7 +246,7 @@
                 <button data-effort="max"><span class="effort-dot"></span><span><strong>Max</strong><small>More thorough reasoning</small></span><span class="menu-check"></span></button>
               </div>
             </div>
-            <div class="composer-end"><span class="composer-hint">↵ to send · shift + ↵ for newline</span><button class="send-btn" id="sendBtn" disabled aria-label="Send message"><span id="sendGlyph"><svg class="ico"><use href="#i-arrow-up"></use></svg></span></button></div>
+            <div class="composer-end"><span class="composer-hint">↵ to send · shift + ↵ for newline</span><button class="send-btn" id="sendBtn" disabled aria-label="Send message"><span id="sendGlyph"><svg aria-hidden="true" class="ico"><use href="#i-arrow-up"></use></svg></span></button></div>
           </div>
         </div>
         <div class="composer-note">kernel can make mistakes. verify anything important.</div>
@@ -302,10 +304,10 @@
   <div class="modal-backdrop" id="settingsBackdrop" hidden>
     <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
       <aside class="settings-sidebar"><div class="settings-brand">kernel</div><div class="settings-label">PREFERENCES</div>
-        <button class="settings-tab active" data-settings-tab="connection"><svg class="ico"><use href="#i-settings"></use></svg><span>Connection</span></button><button class="settings-tab" data-settings-tab="model"><svg class="ico"><use href="#i-sliders"></use></svg><span>Model & effort</span></button><button class="settings-tab" data-settings-tab="appearance"><svg class="ico"><use href="#i-sliders"></use></svg><span>Appearance</span></button><button class="settings-tab" data-settings-tab="data"><svg class="ico"><use href="#i-file"></use></svg><span>Data & privacy</span></button>
+        <button class="settings-tab active" data-settings-tab="connection"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg><span>Connection</span></button><button class="settings-tab" data-settings-tab="model"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Model & effort</span></button><button class="settings-tab" data-settings-tab="appearance"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Appearance</span></button><button class="settings-tab" data-settings-tab="data"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg><span>Data & privacy</span></button>
         <div class="settings-sidebar-bottom"><span class="sidebar-version">KERNEL / 1.0.0</span><button class="settings-close" id="closeSettings">Close <kbd>ESC</kbd></button></div>
       </aside>
-      <div class="settings-content"><div class="settings-content-head"><div><div class="eyebrow left-eyebrow">WORKSPACE SETTINGS</div><h2 id="settingsTitle">Connection</h2></div><button class="icon-btn" id="closeSettingsTop" aria-label="Close settings"><svg class="ico"><use href="#i-x"></use></svg></button></div>
+      <div class="settings-content"><div class="settings-content-head"><div><div class="eyebrow left-eyebrow">WORKSPACE SETTINGS</div><h2 id="settingsTitle">Connection</h2></div><button class="icon-btn" id="closeSettingsTop" aria-label="Close settings"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button></div>
         <div class="settings-page active" data-settings-page="connection">
           <div class="section-intro"><h3>API connection</h3><p>Connect your model provider. Your API key is sent with requests and never included in the site files.</p></div>
           <label class="field field-full"><span>API base URL</span><input id="baseUrlInput" spellcheck="false" value="https://api.tokenjuice.ai/v1"><small>OpenAI-compatible endpoint. Keep the /v1 path.</small></label>
@@ -313,7 +315,7 @@
           <label class="toggle-row"><span><strong>Remember API key on this device</strong><small>Off = session only. On = saved in this browser until you clear it.</small></span><input class="switch" id="rememberKey" type="checkbox"></label>
           <div class="connection-actions"><button class="primary-btn" id="saveConnectionBtn">Save connection</button><button class="secondary-btn" id="testConnectionBtn">Test connection</button><button class="subtle-btn" id="clearApiKeyBtn">Clear key</button></div>
           <div class="test-result" id="connectionResult" hidden></div>
-          <div class="notice-box"><span class="notice-icon"><svg class="ico"><use href="#i-info"></use></svg></span><p><strong>Browser-side API access.</strong> Anyone who can use this page can enter their own key. Your key stays in your browser storage and is sent only to the configured API endpoint (through this site's same-origin proxy for the default TokenJuice URL). Don't use this as a public shared kiosk.</p></div>
+          <div class="notice-box"><span class="notice-icon"><svg aria-hidden="true" class="ico"><use href="#i-info"></use></svg></span><p><strong>Browser-side API access.</strong> Anyone who can use this page can enter their own key. Your key stays in your browser storage and is sent only to the configured API endpoint (through this site's same-origin proxy for the default TokenJuice URL). Don't use this as a public shared kiosk.</p></div>
         </div>
         <div class="settings-page" data-settings-page="model" hidden>
           <div class="section-intro"><h3>Model configuration</h3><p>Choose the model and control how much reasoning it uses.</p></div>
@@ -344,7 +346,7 @@
     </section>
   </div>
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
-  <div class="command-backdrop" id="commandBackdrop" hidden><div class="command-palette"><div class="command-input"><span>⌕</span><input id="commandInput" placeholder="Type a command…" autocomplete="off"><kbd>ESC</kbd></div><div class="command-list" id="commandList"></div><div class="command-foot">KERNEL COMMANDS <span>↑ ↓ navigate · ↵ select</span></div></div></div>
+  <div class="command-backdrop" id="commandBackdrop" hidden><div class="command-palette"><div class="command-input"><span>⌕</span><input id="commandInput" type="text" placeholder="Type a command…" autocomplete="off" aria-label="Search commands"><kbd>ESC</kbd></div><div class="command-list" id="commandList"></div><div class="command-foot">KERNEL COMMANDS <span>↑ ↓ navigate · ↵ select</span></div></div></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/highlight.min.js" crossorigin="anonymous" defer onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/highlight.js@11.12.0/build/highlight.min.js'"></script>
   <script type="module" src="./src/main.js"></script>
 </body>

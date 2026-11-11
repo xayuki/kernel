@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kernel-shell-v6-vercel';
+const CACHE_NAME = 'kernel-shell-v7-design-system';
 const SHELL = ['./', './index.html', './favicon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {

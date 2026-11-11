@@ -2,7 +2,7 @@
   "name": "kernel",
   "private": false,
   "engines": {
-    "node": ">=20.19.0"
+    "node": "22.x"
   },
   "version": "0.2.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "node --check app.js && node --check src/main.js && node --check vite.config.js && node --check lib/tokenjuice-proxy.js && node --check api/tokenjuice/chat/completions.js && node --check api/tokenjuice/models.js",
+    "check": "node --check app.js && node --check lib/openai-stream.js && node --check src/main.js && node --check vite.config.js && node --check lib/tokenjuice-proxy.js && node --check api/tokenjuice/chat/completions.js && node --check api/tokenjuice/models.js",
     "test": "node --test"
   },
   "devDependencies": {
