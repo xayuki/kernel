@@ -13,7 +13,7 @@ function streamFromBytes(chunks) {
 
 test('parses frames split across byte chunks and preserves split UTF-8 characters', async () => {
   const encoder = new TextEncoder();
-  const bytes = encoder.encode('data: {"choices":[{"delta":{"content":"hello 🌍"}}]}\\r\\n\\r\\ndata: [DONE]\\r\\n\\r\\n');
+  const bytes = encoder.encode('data: {"choices":[{"delta":{"content":"hello 🌍"}}]}\r\n\r\ndata: [DONE]\r\n\r\n');
   const emoji = encoder.encode('🌍');
   let emojiStart = -1;
   for (let index = 0; index <= bytes.length - emoji.length; index += 1) {
@@ -50,7 +50,7 @@ test('processes a final frame without a trailing newline, including finish metad
 
 test('stops at the [DONE] sentinel and ignores later frames', async () => {
   const encoder = new TextEncoder();
-  const source = ': keep-alive\\n\\nevent: message\\n\\ndata: {"choices":[{"delta":{"content":"ok"}}]}\\n\\ndata: [DONE]\\n\\ndata: {"choices":[{"delta":{"content":"late"}}]}\\n\\n';
+  const source = ': keep-alive\n\nevent: message\n\ndata: {"choices":[{"delta":{"content":"ok"}}]}\n\ndata: [DONE]\n\ndata: {"choices":[{"delta":{"content":"late"}}]}\n\n';
   const received = [];
 
   await consumeOpenAIStream(streamFromBytes([encoder.encode(source)]), chunk => received.push(chunk));
