@@ -673,7 +673,7 @@ function enterWorkspace() {
   }, 1250);
   window.setTimeout(() => {
     shell.classList.remove('workspace-arriving');
-    $('#promptInput')?.focus();
+    if (window.matchMedia('(min-width: 960px)').matches) $('#promptInput')?.focus();
   }, 1650);
 }
 
