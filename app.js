@@ -233,10 +233,19 @@ function switchView(view) {
   currentView = view;
   $('#chatStage').hidden = view !== 'chats'; $('#composerWrap').hidden = view !== 'chats';
   $('#filesView').hidden = view !== 'files'; $('#personalityView').hidden = view !== 'personality';
-  $$('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
+  $('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
   if (view === 'chats') showConversation();
   if (view === 'files') loadFileEditor();
   if (view === 'personality') syncPersonalityUI();
+  const activeSurface = view === 'files' ? $('#filesView') : view === 'personality' ? $('#personalityView') : $('#chatStage');
+  activeSurface.classList.remove('is-view-entering');
+  void activeSurface.offsetWidth;
+  activeSurface.classList.add('is-view-entering');
+  if (view === 'chats') {
+    $('#composerWrap').classList.remove('is-view-entering');
+    void $('#composerWrap').offsetWidth;
+    $('#composerWrap').classList.add('is-view-entering');
+  }
   $('#currentTitle').textContent = view === 'files' ? 'agent files' : view === 'personality' ? 'personality' : (activeChat()?.title || 'new conversation');
 }
 function showConversation(options = {}) {
@@ -337,7 +346,10 @@ function queueMessageReveal(article, sequence = 0) {
 }
 function scrollToBottom() {
   const stage = $('#chatStage');
-  requestAnimationFrame(() => { stage.scrollTo({ top: stage.scrollHeight, behavior: 'smooth' }); });
+  requestAnimationFrame(() => {
+    if (generationActive) stage.scrollTop = stage.scrollHeight;
+    else stage.scrollTo({ top: stage.scrollHeight, behavior: 'smooth' });
+  });
 }
 function updateStreamingMessage(message) {
   const root = $('#messages');
@@ -530,6 +542,7 @@ function setEffort(value) {
   settings.effort = value; persistSettings(); updateEffortUI(); $('#effortMenu').hidden = true;
 }
 function openSettings(tab = 'connection') {
+  $('#settingsBackdrop').classList.remove('is-closing');
   $('#settingsBackdrop').hidden = false;
   $('#baseUrlInput').value = settings.baseUrl || DEFAULT_BASE;
   $('#apiKeyInput').value = '';
@@ -543,7 +556,15 @@ function openSettings(tab = 'connection') {
   $('#connectionResult').hidden = true;
   switchSettingsTab(tab);
 }
-function closeSettings() { $('#settingsBackdrop').hidden = true; }
+function closeSettings() {
+  const backdrop = $('#settingsBackdrop');
+  if (backdrop.hidden || backdrop.classList.contains('is-closing')) return;
+  backdrop.classList.add('is-closing');
+  window.setTimeout(() => {
+    backdrop.hidden = true;
+    backdrop.classList.remove('is-closing');
+  }, 320);
+}
 function switchSettingsTab(tab) {
   $$('.settings-tab').forEach(button => button.classList.toggle('active', button.dataset.settingsTab === tab));
   $$('.settings-page').forEach(page => { const active = page.dataset.settingsPage === tab; page.classList.toggle('active', active); page.hidden = !active; });
@@ -753,9 +774,21 @@ async function copyText(text, successMessage = 'Copied to clipboard.') {
   }
 }
 function openCommandPalette() {
-  $('#commandBackdrop').hidden = false; $('#commandInput').value = ''; renderCommandList(''); $('#commandInput').focus();
+  $('#commandBackdrop').classList.remove('is-closing');
+  $('#commandBackdrop').hidden = false;
+  $('#commandInput').value = '';
+  renderCommandList('');
+  $('#commandInput').focus();
 }
-function closeCommandPalette() { $('#commandBackdrop').hidden = true; }
+function closeCommandPalette() {
+  const backdrop = $('#commandBackdrop');
+  if (backdrop.hidden || backdrop.classList.contains('is-closing')) return;
+  backdrop.classList.add('is-closing');
+  window.setTimeout(() => {
+    backdrop.hidden = true;
+    backdrop.classList.remove('is-closing');
+  }, 320);
+}
 function renderCommandList(query) {
   const commands = [
     ['＋', 'New chat', 'new-chat', 'Ctrl K'], ['⚙', 'Open settings', 'settings', 'Ctrl ,'], ['◫', 'Go to chats', 'chats', ''], ['⌘', 'Open agent files', 'files', ''], ['◈', 'Customize personality', 'personality', ''], ['⇩', 'Export workspace', 'export', ''], ['✳', 'Set reasoning effort', 'effort', '']
