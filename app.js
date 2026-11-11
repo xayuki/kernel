@@ -1,5 +1,7 @@
 'use strict';
 
+import { consumeOpenAIStream } from './lib/openai-stream.js';
+
 const DEFAULT_BASE = 'https://api.tokenjuice.ai/v1';
 const DEFAULT_MODEL = 'deepseek-ai/DeepSeek-V4.1-Flash-1017';
 const STORAGE = {
@@ -204,16 +206,54 @@ function ensureChat() { if (!activeChat()) createChat(); return activeChat(); }
 function chatTitleFrom(text) { const clean = String(text).replace(/\s+/g, ' ').trim(); return clean.length > 45 ? `${clean.slice(0, 45).trim()}…` : (clean || 'New conversation'); }
 function renderChatList() {
   const query = $('#chatSearch').value.trim().toLowerCase();
-  const list = $('#chatList'); list.innerHTML = '';
-  const matching = chats.filter(chat => !query || chat.title.toLowerCase().includes(query) || chat.messages.some(m => String(m.content || '').toLowerCase().includes(query)));
+  const list = $('#chatList');
+  list.innerHTML = '';
+  const matching = chats.filter(chat =>
+    !query ||
+    String(chat.title || '').toLowerCase().includes(query) ||
+    chat.messages.some(message => String(message.content || '').toLowerCase().includes(query))
+  );
+
   for (const chat of matching) {
-    const row = document.createElement('div'); row.className = `chat-item ${chat.id === activeChatId ? 'active' : ''}`; row.dataset.id = chat.id; row.title = chat.title; row.setAttribute('aria-label', chat.title);
-    row.innerHTML = `<span class="chat-dot"><svg class="ico"><use href="#i-chat"></use></svg></span><span class="chat-title"></span><button class="chat-more" title="Conversation options" aria-label="Conversation options">···</button>`;
-    $('.chat-title', row).textContent = chat.title;
-    row.addEventListener('click', event => { if (event.target.closest('.chat-more')) { event.stopPropagation(); chatMenu(chat.id); return; } activeChatId = chat.id; showConversation(); renderChatList(); });
+    const row = document.createElement('div');
+    row.className = 'chat-item' + (chat.id === activeChatId ? ' active' : '');
+    row.dataset.id = chat.id;
+
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.className = 'chat-open';
+    open.title = chat.title || 'Untitled conversation';
+    open.setAttribute('aria-label', 'Open conversation: ' + (chat.title || 'Untitled conversation'));
+    if (chat.id === activeChatId) open.setAttribute('aria-current', 'page');
+    open.innerHTML = '<span class="chat-dot"><svg class="ico" aria-hidden="true"><use href="#i-chat"></use></svg></span><span class="chat-title"></span>';
+    $('.chat-title', open).textContent = chat.title || 'Untitled conversation';
+    open.addEventListener('click', () => {
+      activeChatId = chat.id;
+      showConversation();
+      renderChatList();
+    });
+
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'chat-more';
+    more.title = 'Conversation options';
+    more.setAttribute('aria-label', 'Options for ' + (chat.title || 'conversation'));
+    more.textContent = '···';
+    more.addEventListener('click', event => {
+      event.stopPropagation();
+      chatMenu(chat.id);
+    });
+
+    row.append(open, more);
     list.append(row);
   }
-  if (!matching.length && query) list.innerHTML = '<div class="empty-search">No matching conversations.</div>';
+
+  if (!matching.length && query) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-search';
+    empty.textContent = 'No matching conversations.';
+    list.append(empty);
+  }
   updateChatCount();
 }
 function chatMenu(id) {
@@ -455,35 +495,29 @@ function parseApiError(text, status) {
   return `API error (${status}): ${String(message).slice(0, 360)}`;
 }
 async function readStreamingResponse(response, assistantMessage, chat) {
-  const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = ''; let finished = false;
-  while (!finished) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n'); buffer = lines.pop() || '';
-    for (const line of lines) {
-      if (!line.startsWith('data:')) continue;
-      const payload = line.slice(5).trim(); if (!payload || payload === '[DONE]') { if (payload === '[DONE]') finished = true; continue; }
-      let chunk; try { chunk = JSON.parse(payload); } catch { continue; }
-      const delta = chunk.choices?.[0]?.delta;
-      if (typeof delta?.content === 'string') assistantMessage.content += delta.content;
-      else if (Array.isArray(delta?.content)) assistantMessage.content += delta.content.map(part => part.text || '').join('');
-      const finish = chunk.choices?.[0]?.finish_reason;
-      if (chunk.usage) assistantMessage.usage = chunk.usage;
-      if (delta?.content) {
-        assistantMessage.status = '';
-        updateStreamingMessage(assistantMessage);
-      }
-      if (finish) assistantMessage.finishReason = finish;
+  await consumeOpenAIStream(response.body, chunk => {
+    const delta = chunk.choices?.[0]?.delta;
+    if (typeof delta?.content === 'string') assistantMessage.content += delta.content;
+    else if (Array.isArray(delta?.content)) {
+      assistantMessage.content += delta.content.map(part => part.text || '').join('');
     }
-    if (generationActive && assistantMessage.content && !$('#messages').querySelector(`[data-message-id="${CSS.escape(assistantMessage.id)}"]`)) updateStreamingMessage(assistantMessage);
+
+    if (chunk.usage) assistantMessage.usage = chunk.usage;
+    const finish = chunk.choices?.[0]?.finish_reason;
+    if (finish) assistantMessage.finishReason = finish;
+
+    if (delta?.content) {
+      assistantMessage.status = '';
+      updateStreamingMessage(assistantMessage);
+    }
+  }, { signal: abortController?.signal });
+
+  if (!assistantMessage.content && assistantMessage.finishReason === 'length') {
+    assistantMessage.content = 'The response reached its output-token limit before any visible answer was returned. Increase the maximum output tokens or lower the thinking effort.';
   }
-  if (buffer.trim().startsWith('data:')) {
-    const payload = buffer.trim().slice(5).trim();
-    if (payload && payload !== '[DONE]') { try { const chunk = JSON.parse(payload); const delta = chunk.choices?.[0]?.delta; if (typeof delta?.content === 'string') assistantMessage.content += delta.content; if (chunk.usage) assistantMessage.usage = chunk.usage; } catch {} }
+  if (!assistantMessage.content) {
+    assistantMessage.content = 'The model returned an empty message. Try again or switch thinking effort.';
   }
-  if (!assistantMessage.content && assistantMessage.finishReason === 'length') assistantMessage.content = 'The response reached its output-token limit before any visible answer was returned. Increase the maximum output tokens or lower the thinking effort.';
-  if (!assistantMessage.content) assistantMessage.content = 'The model returned an empty message. Try again or switch thinking effort.';
 }
 async function generateAssistantReply() {
   const chat = activeChat(); if (!chat) return;
