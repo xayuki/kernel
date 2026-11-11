@@ -10,9 +10,9 @@
   --text: #f1f2f3;
   --text-soft: #c6c9ce;
   --text-muted: #9ba1a9;
-  --text-faint: #747b84;
+  --text-faint: #7d848d;
   --border: #30343a;
-  --border-strong: #555b64;
+  --border-strong: #686f78;
   --line: rgba(255,255,255,.075);
   --white: #f5f6f7;
   --success: #b9c5b9;
@@ -1022,25 +1022,6 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 }
 
 /* Touch hardware gets larger targets, irrespective of viewport width. */
-@media (hover: none) {
-  .icon-btn, .tiny-icon { min-width: 44px; min-height: 44px; }
-  .new-chat-btn, .nav-item, .chat-open, .chat-more, .profile-button,
-  .composer-tool, .send-btn, .model-pill, .primary-small, .primary-btn,
-  .secondary-btn, .subtle-btn, .outline-wide, .danger-btn, .file-tab,
-  .settings-tab, .settings-close, .connect-button, .text-button,
-  .entry-advanced summary { min-height: 44px; }
-  .chat-more { width: 44px; height: 44px; opacity: 1; }
-  .send-btn { width: 44px; height: 44px; }
-  .model-pill { min-height: 44px; }
-  .composer-tool { min-height: 44px; }
-  .field input, .field select, .field textarea, .key-field input,
-  .sidebar-search input, .command-input input { font-size: 16px; }
-  .code-copy { opacity: 1; }
-}
-@media (hover: none) {
-  .chat-more { opacity: 1; }
-  .code-copy { opacity: 1; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
