@@ -32,9 +32,28 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const safeJSON = (value, fallback) => { try { return value ? JSON.parse(value) : fallback; } catch { return fallback; } };
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`);
 const now = () => new Date().toISOString();
+function normalizeChats(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter(chat => chat && typeof chat === 'object').map(chat => ({
+    ...chat,
+    id: typeof chat.id === 'string' && chat.id ? chat.id : uid(),
+    title: String(chat.title || 'New conversation').slice(0, 90),
+    createdAt: typeof chat.createdAt === 'string' ? chat.createdAt : now(),
+    updatedAt: typeof chat.updatedAt === 'string' ? chat.updatedAt : now(),
+    messages: Array.isArray(chat.messages) ? chat.messages
+      .filter(message => message && typeof message === 'object' && ['user', 'assistant'].includes(message.role))
+      .map(message => ({
+        ...message,
+        id: typeof message.id === 'string' && message.id ? message.id : uid(),
+        content: typeof message.content === 'string' ? message.content : '',
+        createdAt: typeof message.createdAt === 'string' ? message.createdAt : now(),
+        attachments: Array.isArray(message.attachments) ? message.attachments : []
+      })) : []
+  }));
+}
 
 let settings = Object.assign({ baseUrl: DEFAULT_BASE, model: DEFAULT_MODEL, maxTokens: 4096, topP: 0.95, effort: 'high', stream: true, accent: 'mono', compact: false, enterSends: true, sidebarCollapsed: false }, safeJSON(localStorage.getItem(STORAGE.settings), {}));
-let chats = safeJSON(localStorage.getItem(STORAGE.chats), []);
+let chats = normalizeChats(safeJSON(localStorage.getItem(STORAGE.chats), []));
 let files = Object.assign({}, DEFAULT_FILES, safeJSON(localStorage.getItem(STORAGE.files), {}));
 let persona = Object.assign({ preset: 'balanced', name: 'kernel', responseLength: 'adaptive', tone: 'natural', format: 'adaptive', notes: '' }, safeJSON(localStorage.getItem(STORAGE.persona), {}));
 let apiKey = sessionStorage.getItem(STORAGE.key) || localStorage.getItem(STORAGE.key) || '';
@@ -70,74 +89,22 @@ function safeLink(url) {
   try { const parsed = new URL(url); return ['https:', 'http:'].includes(parsed.protocol) ? parsed.href : ''; } catch { return ''; }
 }
 function inlineMarkdown(text) {
-  let value = text;
-  value = value.replace(/`([^`]+)`/g, '<code>$1</code>');
+  let value = escapeHTML(String(text ?? ''));
+  value = value.replace(/\x60([^\x60]+)\x60/g, '<code>$1</code>');
   value = value.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   value = value.replace(/~~(.+?)~~/g, '<del>$1</del>');
   value = value.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
-  value = value.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, url) => {
-    const href = safeLink(url); return href ? `<a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
+  value = value.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, rawUrl) => {
+    const href = safeLink(rawUrl.replace(/&amp;/g, '&'));
+    return href ? '<a href="' + escapeHTML(href) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label;
   });
-  return value;
-}
-const CODE_LANGUAGE_ALIASES = {
-  js: 'javascript', jsx: 'javascript', mjs: 'javascript', cjs: 'javascript',
-  ts: 'typescript', mts: 'typescript', cts: 'typescript', tsx: 'typescript',
-  py: 'python', py3: 'python', ps: 'powershell', ps1: 'powershell', shell: 'bash', sh: 'bash', zsh: 'bash',
-  yml: 'yaml', md: 'markdown', htm: 'xml', html: 'xml', svg: 'xml',
-  cs: 'csharp', 'c#': 'csharp', 'c++': 'cpp', hpp: 'cpp', h: 'c',
-  rb: 'ruby', rs: 'rust', kt: 'kotlin', tex: 'latex', docker: 'dockerfile',
-  luau: 'lua', roblox: 'lua', txt: 'plaintext', text: 'plaintext', plain: 'plaintext'
-};
-const CODE_LANGUAGE_LABELS = {
-  javascript: 'JavaScript', typescript: 'TypeScript', python: 'Python', powershell: 'PowerShell',
-  bash: 'Bash', yaml: 'YAML', markdown: 'Markdown', xml: 'HTML / XML', csharp: 'C#',
-  cpp: 'C++', c: 'C', ruby: 'Ruby', rust: 'Rust', kotlin: 'Kotlin', latex: 'LaTeX',
-  dockerfile: 'Dockerfile', lua: 'Luau / Lua', json: 'JSON', css: 'CSS', sql: 'SQL',
-  java: 'Java', go: 'Go', php: 'PHP', swift: 'Swift', plaintext: 'Text'
-};
-const CODE_DETECTION_LANGUAGES = ['javascript', 'typescript', 'python', 'json', 'xml', 'css', 'bash', 'powershell', 'lua', 'sql', 'yaml', 'java', 'c', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift', 'markdown'];
-function normalizeCodeLanguage(language) {
-  const clean = String(language || '').trim().toLowerCase().split(/[\s,;]+/)[0];
-  return CODE_LANGUAGE_ALIASES[clean] || clean;
-}
-function renderCodeBlock(source, language = '') {
-  const rawCode = String(source ?? '');
-  const originalLanguage = String(language || '').trim().split(/[\s,;]+/)[0];
-  const requestedLanguage = normalizeCodeLanguage(originalLanguage);
-  let chosenLanguage = requestedLanguage;
-  let highlighted = escapeHTML(rawCode);
-
-  if (window.hljs) {
-    try {
-      if (requestedLanguage && requestedLanguage !== 'plaintext' && window.hljs.getLanguage(requestedLanguage)) {
-        highlighted = window.hljs.highlight(rawCode, { language: requestedLanguage, ignoreIllegals: true }).value;
-      } else if (!originalLanguage || (requestedLanguage && requestedLanguage !== 'plaintext' && !window.hljs.getLanguage(requestedLanguage))) {
-        const detected = window.hljs.highlightAuto(rawCode, CODE_DETECTION_LANGUAGES);
-        if (detected.language && detected.relevance >= 4) {
-          chosenLanguage = detected.language;
-          highlighted = detected.value;
-        } else if (!originalLanguage) {
-          chosenLanguage = 'plaintext';
-        }
-      }
-    } catch (error) {
-      highlighted = escapeHTML(rawCode);
-    }
-  }
-
-  const explicitLabels = { luau: 'Luau', roblox: 'Luau', jsx: 'JSX', tsx: 'TSX', html: 'HTML', htm: 'HTML', svg: 'SVG', sh: 'Shell', ps1: 'PowerShell' };
-  const displayLanguage = originalLanguage
-    ? (explicitLabels[originalLanguage.toLowerCase()] || CODE_LANGUAGE_LABELS[chosenLanguage] || originalLanguage.toUpperCase())
-    : (CODE_LANGUAGE_LABELS[chosenLanguage] || (chosenLanguage ? chosenLanguage.toUpperCase() : 'CODE'));
-  const className = chosenLanguage && chosenLanguage !== 'plaintext' ? ` class="hljs language-${escapeHTML(chosenLanguage)}"` : ' class="hljs language-plaintext"';
-  return `<section class="code-block" data-code-language="${escapeHTML(chosenLanguage || 'plaintext')}"><div class="code-toolbar"><span class="code-language">${escapeHTML(displayLanguage)}</span><button class="code-copy" type="button" data-copy-code aria-label="Copy code" title="Copy code"><svg class="ico"><use href="#i-copy"></use></svg><span>Copy</span></button></div><pre><code${className}>${highlighted}</code></pre></section>`;
+  return value.replace(/\n/g, '<br>');
 }
 function renderMarkdown(source) {
   if (!source) return '';
   const lines = String(source).replace(/\r/g, '').split('\n');
   const output = []; let paragraph = []; let listType = ''; let listItems = []; let quote = [];
-  const flushParagraph = () => { if (paragraph.length) { output.push(`<p>${inlineMarkdown(paragraph.join('<br>'))}</p>`); paragraph = []; } };
+  const flushParagraph = () => { if (paragraph.length) { output.push(`<p>${inlineMarkdown(paragraph.join('\n'))}</p>`); paragraph = []; } };
   const flushList = () => { if (listItems.length) { output.push(`<${listType}>${listItems.map(item => `<li>${inlineMarkdown(item)}</li>`).join('')}</${listType}>`); listItems = []; listType = ''; } };
   const flushQuote = () => { if (quote.length) { flushParagraph(); flushList(); output.push(`<blockquote>${quote.map(item => `<p>${inlineMarkdown(item)}</p>`).join('')}</blockquote>`); quote = []; } };
   let inCode = false, codeLang = '', codeLines = [];
@@ -156,7 +123,7 @@ function renderMarkdown(source) {
     if (trimmed.startsWith('>')) { flushParagraph(); flushList(); quote.push(trimmed.replace(/^>\s?/, '')); continue; }
     const unordered = trimmed.match(/^[-*+]\s+(.*)$/); const ordered = trimmed.match(/^\d+[.)]\s+(.*)$/);
     if (unordered || ordered) { flushParagraph(); flushQuote(); const nextType = unordered ? 'ul' : 'ol'; if (listType && listType !== nextType) flushList(); listType = nextType; listItems.push((unordered || ordered)[1]); continue; }
-    flushList(); flushQuote(); paragraph.push(escapeHTML(line));
+    flushList(); flushQuote(); paragraph.push(line);
   }
   if (inCode) output.push(renderCodeBlock(codeLines.join('\n'), codeLang));
   flushParagraph(); flushList(); flushQuote();
@@ -197,6 +164,7 @@ function updateEffortUI() {
 }
 function updateChatCount() { $('#chatCount').textContent = String(chats.length); }
 function createChat() {
+  if (generationActive) abortController?.abort();
   const chat = { id: uid(), title: 'New conversation', createdAt: now(), updatedAt: now(), messages: [] };
   chats.unshift(chat); activeChatId = chat.id; persistChats(); renderChatList(); showConversation(); $('#promptInput').focus();
 }
@@ -205,35 +173,123 @@ function chatTitleFrom(text) { const clean = String(text).replace(/\s+/g, ' ').t
 function renderChatList() {
   const query = $('#chatSearch').value.trim().toLowerCase();
   const list = $('#chatList'); list.innerHTML = '';
-  const matching = chats.filter(chat => !query || chat.title.toLowerCase().includes(query) || chat.messages.some(m => String(m.content || '').toLowerCase().includes(query)));
+  const matching = chats.filter(chat => {
+    const title = String(chat.title || '').toLowerCase();
+    const messages = Array.isArray(chat.messages) ? chat.messages : [];
+    return !query || title.includes(query) || messages.some(message => String(message.content || '').toLowerCase().includes(query));
+  });
   for (const chat of matching) {
-    const row = document.createElement('div'); row.className = `chat-item ${chat.id === activeChatId ? 'active' : ''}`; row.dataset.id = chat.id; row.title = chat.title; row.setAttribute('aria-label', chat.title);
-    row.innerHTML = `<span class="chat-dot"><svg class="ico"><use href="#i-chat"></use></svg></span><span class="chat-title"></span><button class="chat-more" title="Conversation options" aria-label="Conversation options">···</button>`;
+    const row = document.createElement('div');
+    row.className = 'chat-item' + (chat.id === activeChatId ? ' active' : '');
+    row.dataset.id = chat.id;
+    row.setAttribute('role', 'listitem');
+    row.innerHTML = '<button class="chat-open" type="button"><span class="chat-dot"><svg class="ico" aria-hidden="true"><use href="#i-chat"></use></svg></span><span class="chat-title"></span></button><button class="chat-more" type="button" title="Conversation options" aria-label="Options for conversation">···</button>';
     $('.chat-title', row).textContent = chat.title;
-    row.addEventListener('click', event => { if (event.target.closest('.chat-more')) { event.stopPropagation(); chatMenu(chat.id); return; } activeChatId = chat.id; showConversation(); renderChatList(); });
+    const openButton = $('.chat-open', row);
+    openButton.setAttribute('aria-label', chat.title);
+    openButton.setAttribute('aria-current', chat.id === activeChatId ? 'page' : 'false');
+    $('.chat-more', row).addEventListener('click', event => { event.stopPropagation(); chatMenu(chat.id); });
+    openButton.addEventListener('click', () => {
+      if (generationActive && chat.id !== activeChatId) abortController?.abort();
+      activeChatId = chat.id;
+      showConversation();
+      renderChatList();
+    });
     list.append(row);
   }
   if (!matching.length && query) list.innerHTML = '<div class="empty-search">No matching conversations.</div>';
   updateChatCount();
 }
 function chatMenu(id) {
-  const chat = chats.find(item => item.id === id); if (!chat) return;
-  const action = prompt(`Conversation: ${chat.title}\nType rename or delete.`, 'rename');
-  if (!action) return;
-  if (action.toLowerCase() === 'rename') {
-    const title = prompt('New conversation title:', chat.title);
-    if (title && title.trim()) { chat.title = title.trim().slice(0, 90); chat.updatedAt = now(); persistChats(); renderChatList(); if (id === activeChatId) $('#currentTitle').textContent = chat.title; }
-  } else if (action.toLowerCase() === 'delete') {
-    if (!confirm(`Delete “${chat.title}”?`)) return;
-    chats = chats.filter(item => item.id !== id); if (activeChatId === id) activeChatId = chats[0]?.id || null;
-    persistChats(); renderChatList(); showConversation(); toast('Conversation deleted.');
-  }
+  const chat = chats.find(item => item.id === id);
+  if (!chat) return;
+  $$('.chat-context-menu').forEach(menu => menu.remove());
+  const row = $$('.chat-item').find(item => item.dataset.id === id);
+  if (!row) return;
+
+  const menu = document.createElement('div');
+  menu.className = 'chat-context-menu';
+  menu.setAttribute('role', 'menu');
+  menu.innerHTML = '<button type="button" role="menuitem" data-action="rename">Rename</button><button type="button" role="menuitem" class="danger" data-action="delete">Delete</button>';
+  row.append(menu);
+  const renameButton = $('[data-action="rename"]', menu);
+  const deleteButton = $('[data-action="delete"]', menu);
+  let closeOnEscape;
+  const closeListeners = () => {
+    document.removeEventListener('pointerdown', closeOnOutside, true);
+    document.removeEventListener('keydown', closeOnEscape);
+  };
+  const closeOnOutside = event => {
+    if (menu.contains(event.target) || row.contains(event.target)) return;
+    menu.remove();
+    closeListeners();
+  };
+  closeOnEscape = event => {
+    if (event.key !== 'Escape') return;
+    menu.remove();
+    closeListeners();
+    $('.chat-more', row)?.focus();
+  };
+  document.addEventListener('pointerdown', closeOnOutside, true);
+  document.addEventListener('keydown', closeOnEscape);
+
+  renameButton.addEventListener('click', event => {
+    event.stopPropagation();
+    menu.remove();
+    closeListeners();
+    const title = $('.chat-title', row);
+    if (!title) return;
+    const input = document.createElement('input');
+    input.className = 'chat-rename-input';
+    input.type = 'text';
+    input.maxLength = 90;
+    input.value = chat.title;
+    input.setAttribute('aria-label', 'Rename conversation');
+    title.replaceWith(input);
+    let finished = false;
+    const finish = save => {
+      if (finished) return;
+      finished = true;
+      const nextTitle = input.value.trim();
+      if (save && nextTitle) {
+        chat.title = nextTitle.slice(0, 90);
+        chat.updatedAt = now();
+        persistChats();
+      }
+      renderChatList();
+      if (id === activeChatId) $('#currentTitle').textContent = chat.title;
+    };
+    input.addEventListener('keydown', keyEvent => {
+      if (keyEvent.key === 'Enter') { keyEvent.preventDefault(); finish(true); }
+      if (keyEvent.key === 'Escape') { keyEvent.preventDefault(); finish(false); }
+    });
+    input.addEventListener('blur', () => finish(true));
+    input.focus();
+    input.select();
+  });
+
+  deleteButton.addEventListener('click', event => {
+    event.stopPropagation();
+    menu.remove();
+    closeListeners();
+    if (!confirm('Delete “' + chat.title + '”?')) return;
+    chats = chats.filter(item => item.id !== id);
+    if (activeChatId === id) {
+      if (generationActive) abortController?.abort();
+      activeChatId = chats[0]?.id || null;
+    }
+    persistChats();
+    renderChatList();
+    showConversation();
+    toast('Conversation deleted.');
+  });
+  renameButton.focus();
 }
 function switchView(view) {
   currentView = view;
   $('#chatStage').hidden = view !== 'chats'; $('#composerWrap').hidden = view !== 'chats';
   $('#filesView').hidden = view !== 'files'; $('#personalityView').hidden = view !== 'personality';
-  $('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
+  $$('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
   if (view === 'chats') showConversation();
   if (view === 'files') loadFileEditor();
   if (view === 'personality') syncPersonalityUI();
@@ -738,7 +794,7 @@ async function importWorkspace(file) {
     const data = JSON.parse(await file.text());
     if (!data || !Array.isArray(data.chats) || !data.files || typeof data.files !== 'object') throw new Error('This does not look like a kernel workspace export.');
     if (!confirm('Import this workspace? Existing chats and configuration will be replaced.')) return;
-    chats = data.chats; files = Object.assign({}, DEFAULT_FILES, data.files); settings = Object.assign(settings, data.settings || {}); persona = Object.assign(persona, data.persona || {}); activeChatId = chats[0]?.id || null;
+    chats = normalizeChats(data.chats); files = Object.assign({}, DEFAULT_FILES, data.files); settings = Object.assign(settings, data.settings || {}); persona = Object.assign(persona, data.persona || {}); activeChatId = chats[0]?.id || null;
     persistChats(); persistFiles(); persistSettings(); persistPersona(); renderChatList(); showConversation(); applyAppearance(); syncPersonalityUI(); updateEffortUI(); toast('Workspace imported.');
   } catch (error) { toast(error.message || 'Could not import workspace.', 'error'); }
 }
@@ -826,9 +882,9 @@ $('#connectionCard').addEventListener('click', event => {
   if ($('#appShell').classList.contains('sidebar-collapsed') && !event.target.closest('button')) openSettings('connection');
 });
 $('#welcomeConnect').addEventListener('click', () => openSettings('connection'));
-$('#closeSidebar').addEventListener('click', () => $('#sidebar').classList.remove('open'));
-$('#openSidebar').addEventListener('click', () => $('#sidebar').classList.add('open'));
-$$('.nav-item').forEach(button => button.addEventListener('click', () => { switchView(button.dataset.view); $('#sidebar').classList.remove('open'); }));
+$('#closeSidebar').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#openSidebar').setAttribute('aria-expanded', 'false'); });
+$('#openSidebar').addEventListener('click', () => { $('#sidebar').classList.add('open'); $('#openSidebar').setAttribute('aria-expanded', 'true'); });
+$$('.nav-item').forEach(button => button.addEventListener('click', () => { switchView(button.dataset.view); $('#sidebar').classList.remove('open'); $('#openSidebar').setAttribute('aria-expanded', 'false'); }));
 $('#chatSearch').addEventListener('input', renderChatList);
 $('#profileButton').addEventListener('click', () => openSettings('connection'));
 $('#openSettingsFromStatus').addEventListener('click', () => openSettings('connection'));
