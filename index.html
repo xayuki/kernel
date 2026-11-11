@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080808">
-  <meta name="description" content="A personal, customizable AI workspace.">
+  <meta name="theme-color" content="#090a0b">
+  <meta name="description" content="Kernel is a personal AI workspace. Bring your own model, shape its personality, and keep your work local.">
   <script>
     try {
       if (sessionStorage.getItem('kernel.apiKey.v1') || localStorage.getItem('kernel.apiKey.v1')) {
@@ -12,138 +12,99 @@
       }
     } catch (_) {}
   </script>
-  <title>kernel — personal AI workspace</title>
+  <title>kernel — your personal AI workspace</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <section id="entryGate" class="entry-gate relative isolate min-h-dvh overflow-hidden bg-black text-white" aria-labelledby="entryTitle">
-    <a class="skip-link" href="#entryForm">Skip to connection form</a>
-    <div class="entry-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="entry-halo pointer-events-none absolute inset-0" aria-hidden="true"></div>
-    <div class="relative mx-auto flex min-h-dvh w-full max-w-[1600px] flex-col px-5 sm:px-8 lg:px-14">
-      <header class="flex h-[76px] shrink-0 items-center justify-between border-b border-white/[0.075]">
-        <a href="#" class="entry-wordmark text-[19px] font-semibold tracking-[-0.075em] text-white" aria-label="kernel home">kernel</a>
-        <div class="hidden items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.025] px-3 py-1.5 text-[10px] font-medium tracking-[0.12em] text-white/55 sm:flex">
-          <span class="size-1.5 rounded-full bg-white/55 shadow-[0_0_10px_rgba(255,255,255,.24)]"></span>
-          PERSONAL AI WORKSPACE
+  <a class="skip-link" href="#chatStage">Skip to workspace</a>
+
+  <section id="entryGate" class="entry-gate" aria-labelledby="entryTitle">
+    <div class="entry-atmosphere" aria-hidden="true"></div>
+    <header class="entry-header">
+      <a class="entry-brand" href="#" aria-label="kernel home"><span class="brand-symbol">k</span><span>kernel</span></a>
+      <span class="entry-header-note"><i></i> PERSONAL AI WORKSPACE</span>
+      <span class="entry-header-side">BRING YOUR OWN MODEL</span>
+    </header>
+
+    <main class="entry-layout">
+      <section class="entry-intro">
+        <div class="eyebrow"><span class="eyebrow-line"></span> YOUR MODEL. YOUR SPACE.</div>
+        <h1 id="entryTitle">Think clearly.<br><span>Make anything.</span></h1>
+        <p class="entry-lede">A private workspace for thinking, building, and figuring things out. Bring the model you trust. Shape how it works.</p>
+        <div class="entry-details">
+          <div class="entry-detail">
+            <span class="detail-index">01</span>
+            <div><strong>Local by default</strong><small>Your chats, files, and preferences stay in this browser.</small></div>
+          </div>
+          <div class="entry-detail">
+            <span class="detail-index">02</span>
+            <div><strong>Built around you</strong><small>Customize the voice, behavior, and context behind every reply.</small></div>
+          </div>
+          <div class="entry-detail">
+            <span class="detail-index">03</span>
+            <div><strong>Your provider, your call</strong><small>TokenJuice by default. OpenAI-compatible endpoints supported.</small></div>
+          </div>
         </div>
-        <span class="text-[10px] tracking-[0.14em] text-white/35">BRING YOUR OWN MODEL</span>
-      </header>
+        <div class="entry-footnote"><span class="footnote-mark">⌁</span> No Kernel account. No cloud sync. No extra layer between you and your model.</div>
+      </section>
 
-      <main class="mx-auto grid w-full max-w-[1180px] flex-1 grid-cols-1 items-center gap-12 py-12 md:gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(390px,460px)] lg:gap-24 lg:py-16">
-        <section class="entry-intro flex flex-col justify-center">
-          <div class="mb-7 flex items-center gap-3 text-[10px] font-medium tracking-[0.2em] text-white/45">
-            <span class="h-px w-7 bg-gradient-to-r from-white/70 to-white/10"></span>
-            YOUR MODEL. YOUR SPACE.
+      <section class="connect-panel" aria-labelledby="connectTitle">
+        <div class="connect-panel-head">
+          <div><span class="panel-kicker">01 <b>/</b> CONNECTION</span><span class="connection-secure"><i></i> HTTPS</span></div>
+          <div class="panel-rule"></div>
+        </div>
+        <div class="connect-heading">
+          <span class="connect-marker">KERNEL / ACCESS</span>
+          <h2 id="connectTitle">Connect your model</h2>
+          <p>Paste your provider key to open your workspace.</p>
+        </div>
+
+        <form id="entryForm" class="entry-form" novalidate>
+          <label class="field-label" for="entryApiKey">API key</label>
+          <div class="key-field entry-key-field">
+            <svg aria-hidden="true" class="ico"><use href="#i-lock"></use></svg>
+            <input id="entryApiKey" name="apiKey" type="password" required autocomplete="off" spellcheck="false" placeholder="Paste your API key…">
+            <button id="entryToggleKey" class="text-button" type="button" aria-label="Show API key">SHOW</button>
           </div>
-          <h1 id="entryTitle" class="max-w-[680px] text-[clamp(3.5rem,7.4vw,6.8rem)] font-medium leading-[.94] tracking-[-0.085em] text-white">
-            Intelligence,<br><span class="entry-title-muted">on your terms.</span>
-          </h1>
-          <p class="mt-8 max-w-[440px] text-[15px] leading-7 text-white/55 sm:text-base">
-            One workspace for thinking, building, and making things happen. Connect your model and make it yours.
-          </p>
+          <p class="field-caption">Stored in this browser only. Never written into the website source.</p>
 
-          <div class="mt-12 grid max-w-[540px] grid-cols-1 gap-5 border-t border-white/[0.09] pt-6 sm:grid-cols-3 sm:gap-7">
-            <div class="entry-feature">
-              <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 5 6v5c0 4.5 2.9 7.7 7 10 4.1-2.3 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-              </span>
-              <strong class="block text-[12px] font-medium text-white/85">Your key, your control</strong>
-              <span class="mt-1 block text-[11px] leading-5 text-white/40">Stored in this browser. Never in the site files.</span>
+          <details class="entry-advanced">
+            <summary><span>Advanced connection settings</span><svg aria-hidden="true" class="ico"><use href="#i-chevron"></use></svg></summary>
+            <div class="advanced-fields">
+              <label class="field"><span>API base URL</span><input id="entryBaseUrl" name="baseUrl" spellcheck="false" value="https://api.tokenjuice.ai/v1"></label>
+              <label class="field"><span>Model ID</span><input id="entryModel" name="model" spellcheck="false" value="deepseek-ai/DeepSeek-V4.1-Flash-1017"></label>
             </div>
-            <div class="entry-feature">
-              <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 12h5M8 15h7"/></svg>
-              </span>
-              <strong class="block text-[12px] font-medium text-white/85">Built around you</strong>
-              <span class="mt-1 block text-[11px] leading-5 text-white/40">Personality, memory, and your own agent files.</span>
-            </div>
-            <div class="entry-feature">
-              <span class="mb-3 inline-grid size-8 place-items-center rounded-lg border border-white/[0.10] bg-gradient-to-b from-white/[0.07] to-white/[0.015] text-white/75">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
-              </span>
-              <strong class="block text-[12px] font-medium text-white/85">Provider flexible</strong>
-              <span class="mt-1 block text-[11px] leading-5 text-white/40">TokenJuice by default. Other compatible APIs too.</span>
-            </div>
-          </div>
-        </section>
+          </details>
 
-        <section class="entry-card-wrap relative mx-auto w-full max-w-[460px] lg:ml-auto">
-          <div class="entry-card-aura pointer-events-none absolute -inset-5 rounded-[32px]" aria-hidden="true"></div>
-          <div class="entry-card relative overflow-hidden rounded-[22px] border border-white/[0.12] bg-[#080808]/95 p-6 shadow-[0_35px_120px_rgba(0,0,0,.72),inset_0_1px_0_rgba(255,255,255,.06)] sm:p-8">
-            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-semibold tracking-[0.17em] text-white/45">01 <span class="mx-1 text-white/20">/</span> CONNECTION</span>
-              <span class="flex items-center gap-1.5 text-[9px] font-medium tracking-[0.1em] text-white/35"><span class="size-1.5 rounded-full bg-white/45"></span> HTTPS</span>
-            </div>
-            <div class="mt-8">
-              <h2 class="text-[25px] font-medium tracking-[-0.055em] text-white">Connect your model</h2>
-              <p class="mt-2 text-[12px] leading-5 text-white/45">Paste your API key below. Kernel will verify it before opening your workspace.</p>
-            </div>
+          <label class="remember-row"><input id="entryRemember" type="checkbox"><span>Remember my key on this device</span></label>
+          <button id="entryConnectBtn" class="connect-button" type="submit">
+            <span id="entryConnectLabel">Connect & open Kernel</span>
+            <svg aria-hidden="true" id="entryConnectIcon" class="ico"><use href="#i-arrow-up-right"></use></svg>
+            <svg aria-hidden="true" id="entryConnectSpinner" class="ico spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+          </button>
+          <div id="entryStatus" class="entry-status" role="status" aria-live="polite" hidden></div>
+        </form>
 
-            <form id="entryForm" class="mt-8" novalidate>
-              <label for="entryApiKey" class="mb-2 block text-[11px] font-medium text-white/75">API key</label>
-              <div class="entry-key-field group relative flex h-[54px] items-center rounded-xl border border-white/[0.13] bg-[#030303] transition duration-200 focus-within:border-white/35 focus-within:shadow-[0_0_0_3px_rgba(255,255,255,.045)]">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="ml-4 size-[17px] shrink-0 text-white/35" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg>
-                <input id="entryApiKey" name="apiKey" type="password" required autocomplete="off" spellcheck="false" placeholder="Paste your API key" class="h-full min-w-0 flex-1 bg-transparent px-3 text-[13px] text-white outline-none placeholder:text-white/25" aria-label="API key">
-                <button id="entryToggleKey" type="button" class="mr-2 rounded-md px-2.5 py-1.5 text-[9px] font-semibold tracking-[0.12em] text-white/40 transition hover:bg-white/[0.06] hover:text-white/85" aria-label="Show API key">SHOW</button>
-              </div>
-              <p class="mt-2 text-[10px] leading-5 text-white/35">Your key stays in this browser. It is not saved in the website's source code.</p>
+        <div class="connect-panel-foot">
+          <span>DEFAULT MODEL</span>
+          <strong>DeepSeek V4.1 Flash</strong>
+          <span class="protocol-tag">OPENAI-COMPATIBLE</span>
+        </div>
+      </section>
+    </main>
 
-              <details class="entry-advanced mt-6 border-t border-white/[0.08] pt-4">
-                <summary class="flex cursor-pointer list-none items-center justify-between text-[11px] text-white/45 transition hover:text-white/80">
-                  <span>Advanced connection settings</span>
-                  <svg aria-hidden="true" viewBox="0 0 24 24" class="entry-advanced-chevron size-4" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m7 10 5 5 5-5"/></svg>
-                </summary>
-                <div class="mt-4 grid gap-4">
-                  <label class="grid gap-2 text-[10px] font-medium text-white/55" for="entryBaseUrl">API base URL
-                    <input id="entryBaseUrl" spellcheck="false" value="https://api.tokenjuice.ai/v1" class="entry-advanced-input h-10 rounded-lg border border-white/[0.11] bg-black px-3 text-[11px] text-white/80 outline-none transition focus:border-white/30">
-                  </label>
-                  <label class="grid gap-2 text-[10px] font-medium text-white/55" for="entryModel">Model ID
-                    <input id="entryModel" spellcheck="false" value="deepseek-ai/DeepSeek-V4.1-Flash-1017" class="entry-advanced-input h-10 rounded-lg border border-white/[0.11] bg-black px-3 text-[11px] text-white/80 outline-none transition focus:border-white/30">
-                  </label>
-                </div>
-              </details>
-
-              <label class="mt-5 flex cursor-pointer items-center gap-2.5 text-[11px] text-white/55">
-                <input id="entryRemember" type="checkbox" class="size-3.5 accent-white">
-                Remember my key on this device
-              </label>
-
-              <button id="entryConnectBtn" type="submit" class="entry-connect group mt-6 flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-[#f5f5f5] to-[#d9d9d9] px-5 text-[12px] font-semibold text-[#101010] shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_7px_25px_rgba(255,255,255,.055)] transition duration-200 hover:-translate-y-0.5 hover:from-white hover:to-[#e7e7e7] hover:shadow-[inset_0_1px_0_white,0_12px_30px_rgba(255,255,255,.09)] active:translate-y-0 disabled:cursor-wait disabled:opacity-60">
-                <span id="entryConnectLabel">Connect & open Kernel</span>
-                <svg aria-hidden="true" id="entryConnectIcon" viewBox="0 0 24 24" class="size-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
-                <svg aria-hidden="true" id="entryConnectSpinner" viewBox="0 0 24 24" class="hidden size-4 animate-spin" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
-              </button>
-              <div id="entryStatus" class="entry-status mt-4 hidden rounded-lg border px-3.5 py-3 text-[11px] leading-5" role="status" aria-live="polite"></div>
-            </form>
-
-            <div class="mt-7 flex items-center justify-between border-t border-white/[0.08] pt-5">
-              <div class="flex items-center gap-2.5">
-                <span class="inline-grid size-7 place-items-center rounded-lg border border-white/[0.09] bg-gradient-to-b from-white/[0.055] to-transparent text-white/55">
-                  <svg aria-hidden="true" viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="10" cy="18" r="1" fill="currentColor"/></svg>
-                </span>
-                <div><div class="text-[10px] font-medium text-white/70">Default model</div><div class="mt-0.5 text-[9px] text-white/35">DeepSeek V4.1 Flash</div></div>
-              </div>
-              <span class="rounded-full border border-white/[0.09] bg-white/[0.025] px-2.5 py-1.5 text-[9px] tracking-[0.08em] text-white/35">OPENAI-COMPATIBLE</span>
-            </div>
-          </div>
-          <p class="mt-4 text-center text-[10px] text-white/30">No Kernel account. No cloud sync. Your workspace lives in this browser.</p>
-        </section>
-      </main>
-
-      <footer class="flex min-h-[58px] shrink-0 items-center justify-between border-t border-white/[0.075] text-[9px] tracking-[0.08em] text-white/30">
-        <span>© KERNEL · PERSONAL AI WORKSPACE</span>
-        <span class="hidden sm:inline">POWERED BY YOUR MODEL PROVIDER</span>
-      </footer>
-    </div>
+    <footer class="entry-footer">
+      <span>© KERNEL · PERSONAL AI WORKSPACE</span>
+      <span>YOUR WORKSPACE, ON YOUR TERMS.</span>
+    </footer>
   </section>
+
   <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.6-3.2A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></symbol>
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4V20H7z"/><path d="M14 3.5V8h4M10 12h5M10 15.5h5"/></symbol>
@@ -167,123 +128,127 @@
     <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c.8-3.3 3.2-5 7-5s6.2 1.7 7 5"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2"/></symbol>
   </svg>
+
   <div class="app-shell" id="appShell" hidden>
-    <a class="skip-link" href="#mainContent">Skip to main content</a>
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Workspace navigation">
       <div class="side-top">
-        <a class="brand" href="#" aria-label="kernel home">
-          <span class="brand-name" translate="no">kernel</span>
-        </a>
-        <button class="icon-btn sidebar-collapse" id="collapseSidebar" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true"><svg aria-hidden="true" class="ico"><use href="#i-panel-left"></use></svg></button>
-        <button class="icon-btn sidebar-close" id="closeSidebar" title="Close sidebar" aria-label="Close sidebar"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button>
+        <a class="brand" href="#" aria-label="kernel home"><span class="brand-symbol">k</span><span class="brand-name">kernel</span></a>
+        <button class="icon-btn sidebar-collapse" id="collapseSidebar" type="button" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true"><svg aria-hidden="true" class="ico"><use href="#i-panel-left"></use></svg></button>
+        <button class="icon-btn sidebar-close" id="closeSidebar" type="button" title="Close sidebar" aria-label="Close sidebar"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button>
       </div>
-      <button class="new-chat-btn" id="newChatBtn" title="New chat" aria-label="New chat"><svg aria-hidden="true" class="ico"><use href="#i-plus"></use></svg><span>New chat</span><kbd>Ctrl K</kbd></button>
-      <div class="sidebar-search" title="Search conversations"><span class="search-icon"><svg aria-hidden="true" class="ico"><use href="#i-search"></use></svg></span><input id="chatSearch" type="search" placeholder="Search conversations" autocomplete="off" aria-label="Search conversations"></div>
-      <div class="side-section-label"><span>WORKSPACE</span><button class="tiny-icon" id="workspaceMenu" title="Workspace options"><svg aria-hidden="true" class="ico"><use href="#i-more"></use></svg></button></div>
-      <nav class="side-nav">
-        <button class="nav-item active" data-view="chats" title="Chats" aria-label="Chats"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-chat"></use></svg></span><span class="nav-label">Chats</span><span class="nav-count" id="chatCount">0</span></button>
-        <button class="nav-item" data-view="files" title="Agent files" aria-label="Agent files"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg></span><span class="nav-label">Agent files</span></button>
-        <button class="nav-item" data-view="personality" title="Personality" aria-label="Personality"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg></span><span class="nav-label">Personality</span></button>
+
+      <button class="new-chat-btn" id="newChatBtn" type="button" title="New chat" aria-label="New chat"><svg aria-hidden="true" class="ico"><use href="#i-plus"></use></svg><span>New chat</span><kbd>Ctrl K</kbd></button>
+      <div class="sidebar-search" title="Search conversations"><span class="search-icon"><svg aria-hidden="true" class="ico"><use href="#i-search"></use></svg></span><input id="chatSearch" type="search" placeholder="Search conversations…" autocomplete="off" aria-label="Search conversations"></div>
+
+      <div class="side-section-label"><span>WORKSPACE</span><button class="tiny-icon" id="workspaceMenu" type="button" title="Open command menu" aria-label="Open command menu"><svg aria-hidden="true" class="ico"><use href="#i-more"></use></svg></button></div>
+      <nav class="side-nav" aria-label="Workspace sections">
+        <button class="nav-item active" type="button" data-view="chats" aria-label="Chats"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-chat"></use></svg></span><span class="nav-label">Chats</span><span class="nav-count" id="chatCount">0</span></button>
+        <button class="nav-item" type="button" data-view="files" aria-label="Agent files"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg></span><span class="nav-label">Agent files</span></button>
+        <button class="nav-item" type="button" data-view="personality" aria-label="Personality"><span class="nav-glyph"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg></span><span class="nav-label">Personality</span></button>
       </nav>
+
       <div class="history-head"><span>RECENTS</span><span class="history-line"></span></div>
-      <div class="chat-list" id="chatList" aria-label="Recent conversations"></div>
+      <div class="chat-list" id="chatList" role="list" aria-label="Recent conversations"></div>
+
       <div class="sidebar-bottom">
         <div class="connection-card" id="connectionCard">
           <span class="connection-dot" id="connectionDot"></span>
           <div class="connection-copy"><strong id="connectionStatus">Not connected</strong><span id="connectionSub">Add an API key to begin</span></div>
-          <button class="tiny-icon" id="openSettingsFromStatus" title="Connection settings"><svg aria-hidden="true" class="ico ico-sm"><use href="#i-arrow-up-right"></use></svg></button>
+          <button class="tiny-icon" id="openSettingsFromStatus" type="button" title="Connection settings" aria-label="Connection settings"><svg aria-hidden="true" class="ico"><use href="#i-arrow-up-right"></use></svg></button>
         </div>
-        <button class="profile-button" id="profileButton" title="Settings & preferences" aria-label="Settings and preferences">
+        <button class="profile-button" id="profileButton" type="button" title="Settings & preferences" aria-label="Settings and preferences">
           <span class="profile-glyph"><svg aria-hidden="true" class="ico"><use href="#i-user"></use></svg></span>
           <span class="profile-copy"><strong>Local workspace</strong><small>Settings & preferences</small></span><span class="profile-more">···</span>
         </button>
       </div>
     </aside>
 
-    <main class="main-area" id="mainContent" tabindex="-1">
+    <main class="main-area">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="icon-btn mobile-menu" id="openSidebar" aria-label="Open sidebar"><svg aria-hidden="true" class="ico"><use href="#i-menu"></use></svg></button>
+          <button class="icon-btn mobile-menu" id="openSidebar" type="button" aria-label="Open sidebar" aria-expanded="false"><svg aria-hidden="true" class="ico"><use href="#i-menu"></use></svg></button>
           <div class="crumb"><span class="crumb-muted">workspace</span><span class="crumb-slash">/</span><strong id="currentTitle">new conversation</strong></div>
         </div>
         <div class="topbar-right">
-          <button class="model-pill" id="modelPill" title="Model settings"><span id="modelPillText">DeepSeek V4.1 Flash</span><svg aria-hidden="true" class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
-          <button class="icon-btn top-icon" id="exportChatBtn" title="Export conversation" aria-label="Export conversation"><svg aria-hidden="true" class="ico"><use href="#i-download"></use></svg></button>
-          <button class="icon-btn top-icon" id="settingsBtn" title="Settings" aria-label="Settings"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg></button>
+          <button class="model-pill" id="modelPill" type="button" title="Model settings"><span id="modelPillText">DeepSeek V4.1 Flash</span><svg aria-hidden="true" class="ico chevron"><use href="#i-chevron"></use></svg></button>
+          <button class="icon-btn top-icon" id="exportChatBtn" type="button" title="Export conversation" aria-label="Export conversation"><svg aria-hidden="true" class="ico"><use href="#i-download"></use></svg></button>
+          <button class="icon-btn top-icon" id="settingsBtn" type="button" title="Settings" aria-label="Settings"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg></button>
         </div>
       </header>
 
-      <section class="chat-stage" id="chatStage">
+      <section class="chat-stage" id="chatStage" aria-label="Conversation">
         <div class="welcome" id="welcomeView">
-          
-          <div class="eyebrow">KERNEL / PERSONAL WORKSPACE</div>
-          <h1>What are we working on?<br><span>Start anywhere.</span></h1>
-          <p class="welcome-sub">A quieter place to think, build, and figure things out.<br>Your workspace, configured around the way you work.</p>
-          <div class="suggestion-grid">
-            <button class="suggestion-card" data-prompt="Help me think through an idea from first principles."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-lightbulb"></use></svg></span><span><strong>Think it through</strong><small>Explore an idea from first principles</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Help me build a practical plan for a project I have in mind."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-list"></use></svg></span><span><strong>Make a plan</strong><small>Turn a rough idea into clear next steps</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Review this code carefully. Explain what matters and suggest improvements."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-code"></use></svg></span><span><strong>Work on code</strong><small>Debug, design, and iterate</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion-card" data-prompt="Teach me a topic in a way that builds real understanding."><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-book"></use></svg></span><span><strong>Learn something</strong><small>Build understanding, not just notes</small></span><span class="suggestion-arrow">↗</span></button>
+          <div class="welcome-topline"><span class="eyebrow"><i></i> KERNEL / PERSONAL WORKSPACE</span><span class="welcome-index">EST. FOR YOUR WAY OF WORKING</span></div>
+          <div class="welcome-title-wrap">
+            <h1>What are we<br><span>working on?</span></h1>
+            <p class="welcome-sub">A little more room to think. A lot more control over what happens next.</p>
           </div>
-          <div class="welcome-foot"><span class="mini-shield"><svg aria-hidden="true" class="ico"><use href="#i-lock"></use></svg></span> Your chats and settings stay in this browser <button class="welcome-connect" id="welcomeConnect">Connect API key ↗</button></div>
+          <div class="suggestion-heading"><span>START WITH A DIRECTION</span><span>01 — 04</span></div>
+          <div class="suggestion-grid">
+            <button class="suggestion-card" type="button" data-prompt="Help me think through an idea from first principles."><span class="suggestion-number">01</span><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-lightbulb"></use></svg></span><span class="suggestion-copy"><strong>Think it through</strong><small>Explore an idea from first principles</small></span><svg aria-hidden="true" class="ico suggestion-arrow"><use href="#i-arrow-up-right"></use></svg></button>
+            <button class="suggestion-card" type="button" data-prompt="Help me build a practical plan for a project I have in mind."><span class="suggestion-number">02</span><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-list"></use></svg></span><span class="suggestion-copy"><strong>Make a plan</strong><small>Turn a rough idea into clear next steps</small></span><svg aria-hidden="true" class="ico suggestion-arrow"><use href="#i-arrow-up-right"></use></svg></button>
+            <button class="suggestion-card" type="button" data-prompt="Review this code carefully. Explain what matters and suggest improvements."><span class="suggestion-number">03</span><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-code"></use></svg></span><span class="suggestion-copy"><strong>Work on code</strong><small>Debug, design, and iterate</small></span><svg aria-hidden="true" class="ico suggestion-arrow"><use href="#i-arrow-up-right"></use></svg></button>
+            <button class="suggestion-card" type="button" data-prompt="Teach me a topic in a way that builds real understanding."><span class="suggestion-number">04</span><span class="suggestion-icon"><svg aria-hidden="true" class="ico"><use href="#i-book"></use></svg></span><span class="suggestion-copy"><strong>Learn something</strong><small>Build understanding, not just notes</small></span><svg aria-hidden="true" class="ico suggestion-arrow"><use href="#i-arrow-up-right"></use></svg></button>
+          </div>
+          <div class="welcome-foot"><span><svg aria-hidden="true" class="ico"><use href="#i-lock"></use></svg> Your chats stay in this browser</span><button class="welcome-connect" id="welcomeConnect" type="button">Manage API key <svg aria-hidden="true" class="ico"><use href="#i-arrow-up-right"></use></svg></button></div>
         </div>
         <div class="messages" id="messages" hidden></div>
       </section>
 
-      <section class="composer-wrap" id="composerWrap">
+      <section class="composer-wrap" id="composerWrap" aria-label="Message composer">
         <div class="attachment-strip" id="attachmentStrip" hidden></div>
         <div class="composer-box" id="composerBox">
-          <textarea id="promptInput" rows="1" placeholder="Message kernel…" aria-label="Message"></textarea>
+          <textarea id="promptInput" rows="1" placeholder="Message kernel…" aria-label="Message kernel"></textarea>
           <div class="composer-bottom">
             <div class="composer-tools">
-              <button class="composer-tool" id="attachBtn" title="Attach files"><svg aria-hidden="true" class="ico"><use href="#i-paperclip"></use></svg><span>Attach</span></button>
-              <button class="composer-tool effort-control" id="effortBtn" title="Thinking effort"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span id="effortLabel">High effort</span><svg aria-hidden="true" class="ico ico-sm chevron"><use href="#i-chevron"></use></svg></button>
-              <div class="effort-menu" id="effortMenu" hidden>
+              <button class="composer-tool" id="attachBtn" type="button" title="Attach files"><svg aria-hidden="true" class="ico"><use href="#i-paperclip"></use></svg><span>Attach</span></button>
+              <button class="composer-tool effort-control" id="effortBtn" type="button" title="Thinking effort" aria-haspopup="true" aria-expanded="false"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span id="effortLabel">High effort</span><svg aria-hidden="true" class="ico effort-chevron"><use href="#i-chevron"></use></svg></button>
+              <div class="effort-menu" id="effortMenu" role="group" aria-label="Reasoning effort" hidden>
                 <div class="menu-kicker">REASONING</div>
-                <button data-effort="none"><span class="effort-dot"></span><span><strong>Off</strong><small>Fast answers, no thinking mode</small></span><span class="menu-check"></span></button>
-                <button data-effort="low"><span class="effort-dot"></span><span><strong>Low</strong><small>Quick reasoning</small></span><span class="menu-check"></span></button>
-                <button data-effort="high"><span class="effort-dot"></span><span><strong>High</strong><small>Balanced depth · default</small></span><span class="menu-check">✓</span></button>
-                <button data-effort="max"><span class="effort-dot"></span><span><strong>Max</strong><small>More thorough reasoning</small></span><span class="menu-check"></span></button>
+                <button type="button" data-effort="none" role="radio" aria-checked="false"><span class="effort-dot"></span><span><strong>Off</strong><small>Fast answers, no thinking mode</small></span><span class="menu-check"></span></button>
+                <button type="button" data-effort="low" role="radio" aria-checked="false"><span class="effort-dot"></span><span><strong>Low</strong><small>Quick reasoning</small></span><span class="menu-check"></span></button>
+                <button type="button" data-effort="high" role="radio" aria-checked="true"><span class="effort-dot"></span><span><strong>High</strong><small>Balanced depth · default</small></span><span class="menu-check">✓</span></button>
+                <button type="button" data-effort="max" role="radio" aria-checked="false"><span class="effort-dot"></span><span><strong>Max</strong><small>More thorough reasoning</small></span><span class="menu-check"></span></button>
               </div>
             </div>
-            <div class="composer-end"><span class="composer-hint">↵ to send · shift + ↵ for newline</span><button class="send-btn" id="sendBtn" disabled aria-label="Send message"><span id="sendGlyph"><svg aria-hidden="true" class="ico"><use href="#i-arrow-up"></use></svg></span></button></div>
+            <div class="composer-end"><span class="composer-hint">↵ to send <b>·</b> shift + ↵ for a new line</span><button class="send-btn" id="sendBtn" type="button" disabled aria-label="Send message" title="Send message"><span id="sendGlyph"><svg aria-hidden="true" class="ico"><use href="#i-arrow-up"></use></svg></span></button></div>
           </div>
         </div>
         <div class="composer-note">kernel can make mistakes. verify anything important.</div>
       </section>
 
-      <section class="files-view page-view" id="filesView" hidden>
-        <div class="page-heading"><div><div class="eyebrow left-eyebrow">WORKSPACE CONFIGURATION</div><h2>Agent files<span class="heading-period">.</span></h2><p>Shape how your assistant thinks, responds, and remembers. These files are combined into its system instructions.</p></div><button class="primary-small" id="downloadFilesBtn">↓ Export files</button></div>
+      <section class="files-view page-view" id="filesView" aria-labelledby="filesHeading" hidden>
+        <div class="page-heading"><div><div class="eyebrow left-eyebrow"><i></i> WORKSPACE CONFIGURATION</div><h2 id="filesHeading">Agent files<span>.</span></h2><p>Shape how kernel thinks, responds, and remembers. These files become part of its system instructions.</p></div><button class="primary-small" id="downloadFilesBtn" type="button"><svg aria-hidden="true" class="ico"><use href="#i-download"></use></svg> Export files</button></div>
         <div class="files-layout">
           <aside class="file-rail" id="fileRail">
             <div class="file-rail-title">WORKSPACE FILES</div>
-            <button class="file-tab active" data-file="AGENTS.md"><span class="file-icon">MD</span><span><strong>AGENTS.md</strong><small>Core behavior & rules</small></span></button>
-            <button class="file-tab" data-file="SOUL.md"><span class="file-icon">MD</span><span><strong>SOUL.md</strong><small>Personality & voice</small></span></button>
-            <button class="file-tab" data-file="USER.md"><span class="file-icon">MD</span><span><strong>USER.md</strong><small>Your context & preferences</small></span></button>
-            <button class="file-tab" data-file="MEMORY.md"><span class="file-icon">MD</span><span><strong>MEMORY.md</strong><small>Long-term notes</small></span></button>
-            <button class="file-tab" data-file="TOOLS.md"><span class="file-icon">MD</span><span><strong>TOOLS.md</strong><small>Tool behavior & limits</small></span></button>
+            <button class="file-tab active" type="button" data-file="AGENTS.md"><span class="file-icon">MD</span><span><strong>AGENTS.md</strong><small>Core behavior & rules</small></span></button>
+            <button class="file-tab" type="button" data-file="SOUL.md"><span class="file-icon">MD</span><span><strong>SOUL.md</strong><small>Personality & voice</small></span></button>
+            <button class="file-tab" type="button" data-file="USER.md"><span class="file-icon">MD</span><span><strong>USER.md</strong><small>Your context & preferences</small></span></button>
+            <button class="file-tab" type="button" data-file="MEMORY.md"><span class="file-icon">MD</span><span><strong>MEMORY.md</strong><small>Long-term notes</small></span></button>
+            <button class="file-tab" type="button" data-file="TOOLS.md"><span class="file-icon">MD</span><span><strong>TOOLS.md</strong><small>Tool behavior & limits</small></span></button>
             <div class="file-rail-foot"><span class="save-indicator" id="fileSaveDot"></span><span id="fileSaveStatus">Saved locally</span></div>
           </aside>
           <div class="editor-panel">
-            <div class="editor-toolbar"><div><span class="editor-file-icon">MD</span><strong id="editorFilename">AGENTS.md</strong><span class="editor-badge">MARKDOWN</span></div><div class="editor-actions"><button class="subtle-btn" id="resetFileBtn">Reset</button><button class="subtle-btn" id="copyFileBtn">Copy</button></div></div>
+            <div class="editor-toolbar"><div><span class="editor-file-icon">MD</span><strong id="editorFilename">AGENTS.md</strong><span class="editor-badge">MARKDOWN</span></div><div class="editor-actions"><button class="subtle-btn" id="resetFileBtn" type="button">Reset</button><button class="subtle-btn" id="copyFileBtn" type="button">Copy</button></div></div>
             <textarea class="markdown-editor" id="fileEditor" spellcheck="false" aria-label="Agent file editor"></textarea>
-            <div class="editor-footer"><span><span class="editor-dot"></span> Auto-saved to this browser</span><span id="fileWordCount">0 words</span></div>
+            <div class="editor-footer"><span><i class="editor-dot"></i> Auto-saved to this browser</span><span id="fileWordCount">0 words</span></div>
           </div>
         </div>
       </section>
 
-      <section class="personality-view page-view" id="personalityView" hidden>
-        <div class="page-heading"><div><div class="eyebrow left-eyebrow">MAKE IT YOURS</div><h2>Personality<span class="heading-period">.</span></h2><p>Choose a starting point, then tune the details. Your settings become part of the assistant's system prompt.</p></div></div>
+      <section class="personality-view page-view" id="personalityView" aria-labelledby="personalityHeading" hidden>
+        <div class="page-heading"><div><div class="eyebrow left-eyebrow"><i></i> MAKE IT YOURS</div><h2 id="personalityHeading">Personality<span>.</span></h2><p>Choose a starting point, then tune the details. Your settings become part of the assistant's system prompt.</p></div></div>
         <div class="personality-layout">
           <div class="personality-main">
             <div class="settings-card"><div class="card-head"><div><span class="card-kicker">01 / STARTING POINT</span><h3>Choose a style</h3></div><span class="card-caption">PRESETS</span></div>
               <div class="preset-grid" id="presetGrid">
-                <button class="preset-card active" data-preset="balanced"><span class="preset-mark">◈</span><strong>Balanced</strong><small>Clear, capable, adaptable</small></button>
-                <button class="preset-card" data-preset="direct"><span class="preset-mark">↗</span><strong>Direct</strong><small>Blunt, concise, practical</small></button>
-                <button class="preset-card" data-preset="technical"><span class="preset-mark">⌘</span><strong>Technical</strong><small>Precise, structured, deep</small></button>
-                <button class="preset-card" data-preset="creative"><span class="preset-mark">✳</span><strong>Creative</strong><small>Curious, exploratory, expressive</small></button>
-                <button class="preset-card" data-preset="tutor"><span class="preset-mark">⌁</span><strong>Tutor</strong><small>Patient, clear, Socratic</small></button>
-                <button class="preset-card" data-preset="minimal" ><span class="preset-mark">—</span><strong>Minimal</strong><small>Only what matters</small></button>
+                <button class="preset-card active" type="button" data-preset="balanced"><span class="preset-mark">◈</span><strong>Balanced</strong><small>Clear, capable, adaptable</small></button>
+                <button class="preset-card" type="button" data-preset="direct"><span class="preset-mark">↗</span><strong>Direct</strong><small>Blunt, concise, practical</small></button>
+                <button class="preset-card" type="button" data-preset="technical"><span class="preset-mark">⌘</span><strong>Technical</strong><small>Precise, structured, deep</small></button>
+                <button class="preset-card" type="button" data-preset="creative"><span class="preset-mark">✳</span><strong>Creative</strong><small>Curious, exploratory, expressive</small></button>
+                <button class="preset-card" type="button" data-preset="tutor"><span class="preset-mark">⌁</span><strong>Tutor</strong><small>Patient, clear, Socratic</small></button>
+                <button class="preset-card" type="button" data-preset="minimal"><span class="preset-mark">—</span><strong>Minimal</strong><small>Only what matters</small></button>
               </div>
             </div>
             <div class="settings-card"><div class="card-head"><div><span class="card-kicker">02 / FINE TUNING</span><h3>Voice & behavior</h3></div><span class="card-caption">CUSTOM</span></div>
@@ -292,7 +257,7 @@
               <label class="field field-full"><span>Extra personality notes</span><textarea id="personaNotes" rows="4" placeholder="e.g. Be skeptical of assumptions. Prefer examples over abstract explanations."></textarea><small>Extra direction layered on top of the selected preset.</small></label>
             </div>
           </div>
-          <aside class="personality-preview"><div class="preview-top"><span class="preview-live"><i></i> LIVE PREVIEW</span><span class="preview-dots">···</span></div><div class="preview-name" id="previewName">kernel</div><div class="preview-meta">PERSONAL AI · DEEPSEEK V4.1</div><div class="preview-divider"></div><div class="preview-section-label">CURRENT CONFIGURATION</div><div class="preview-row"><span>Style</span><strong id="previewStyle">Balanced</strong></div><div class="preview-row"><span>Tone</span><strong id="previewTone">Natural</strong></div><div class="preview-row"><span>Length</span><strong id="previewLength">Adaptive</strong></div><div class="preview-row"><span>Formatting</span><strong id="previewFormat">Adaptive</strong></div><div class="preview-callout">Personality changes apply to your next message.</div><button class="outline-wide" id="editSoulBtn">Edit SOUL.md ↗</button></aside>
+          <aside class="personality-preview"><div class="preview-top"><span class="preview-live"><i></i> LIVE PREVIEW</span><span class="preview-dots">···</span></div><div class="preview-name" id="previewName">kernel</div><div class="preview-meta">PERSONAL AI · DEEPSEEK V4.1</div><div class="preview-divider"></div><div class="preview-section-label">CURRENT CONFIGURATION</div><div class="preview-row"><span>Style</span><strong id="previewStyle">Balanced</strong></div><div class="preview-row"><span>Tone</span><strong id="previewTone">Natural</strong></div><div class="preview-row"><span>Length</span><strong id="previewLength">Adaptive</strong></div><div class="preview-row"><span>Formatting</span><strong id="previewFormat">Adaptive</strong></div><div class="preview-callout">Personality changes apply to your next message.</div><button class="outline-wide" id="editSoulBtn" type="button">Edit SOUL.md <svg aria-hidden="true" class="ico"><use href="#i-arrow-up-right"></use></svg></button></aside>
         </div>
       </section>
     </main>
@@ -302,51 +267,69 @@
   <input id="importInput" type="file" accept="application/json,.json" hidden>
 
   <div class="modal-backdrop" id="settingsBackdrop" hidden>
-    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <aside class="settings-sidebar"><div class="settings-brand">kernel</div><div class="settings-label">PREFERENCES</div>
-        <button class="settings-tab active" data-settings-tab="connection"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg><span>Connection</span></button><button class="settings-tab" data-settings-tab="model"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Model & effort</span></button><button class="settings-tab" data-settings-tab="appearance"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Appearance</span></button><button class="settings-tab" data-settings-tab="data"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg><span>Data & privacy</span></button>
-        <div class="settings-sidebar-bottom"><span class="sidebar-version">KERNEL / 1.0.0</span><button class="settings-close" id="closeSettings">Close <kbd>ESC</kbd></button></div>
+    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" tabindex="-1">
+      <aside class="settings-sidebar">
+        <div class="settings-brand"><span class="brand-symbol">k</span> kernel</div>
+        <div class="settings-label">PREFERENCES</div>
+        <button class="settings-tab active" type="button" data-settings-tab="connection"><svg aria-hidden="true" class="ico"><use href="#i-settings"></use></svg><span>Connection</span></button>
+        <button class="settings-tab" type="button" data-settings-tab="model"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Model & effort</span></button>
+        <button class="settings-tab" type="button" data-settings-tab="appearance"><svg aria-hidden="true" class="ico"><use href="#i-sliders"></use></svg><span>Appearance</span></button>
+        <button class="settings-tab" type="button" data-settings-tab="data"><svg aria-hidden="true" class="ico"><use href="#i-file"></use></svg><span>Data & privacy</span></button>
+        <div class="settings-sidebar-bottom"><span class="sidebar-version">KERNEL / 1.0.0</span><button class="settings-close" id="closeSettings" type="button">Close <kbd>ESC</kbd></button></div>
       </aside>
-      <div class="settings-content"><div class="settings-content-head"><div><div class="eyebrow left-eyebrow">WORKSPACE SETTINGS</div><h2 id="settingsTitle">Connection</h2></div><button class="icon-btn" id="closeSettingsTop" aria-label="Close settings"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button></div>
+      <div class="settings-content">
+        <div class="settings-content-head"><div><div class="eyebrow left-eyebrow"><i></i> WORKSPACE SETTINGS</div><h2 id="settingsTitle">Connection</h2></div><button class="icon-btn" id="closeSettingsTop" type="button" aria-label="Close settings"><svg aria-hidden="true" class="ico"><use href="#i-x"></use></svg></button></div>
+
         <div class="settings-page active" data-settings-page="connection">
-          <div class="section-intro"><h3>API connection</h3><p>Connect your model provider. Your API key is sent with requests and never included in the site files.</p></div>
-          <label class="field field-full"><span>API base URL</span><input id="baseUrlInput" spellcheck="false" value="https://api.tokenjuice.ai/v1"><small>OpenAI-compatible endpoint. Keep the /v1 path.</small></label>
-          <label class="field field-full"><span>API key</span><div class="input-with-action"><input id="apiKeyInput" type="password" placeholder="Paste your TokenJuice API key" autocomplete="off"><button class="input-action" id="toggleKeyVisibility">SHOW</button></div><small>Only stored in this browser. Never paste your key into AGENTS.md or other prompt files.</small></label>
+          <div class="section-intro"><h3>API connection</h3><p>Connect your model provider. Your key is sent with requests and never included in the site files.</p></div>
+          <label class="field field-full"><span>API base URL</span><input id="baseUrlInput" name="baseUrl" type="url" autocomplete="url" spellcheck="false" value="https://api.tokenjuice.ai/v1"><small>OpenAI-compatible endpoint. Keep the /v1 path.</small></label>
+          <label class="field field-full"><span>API key</span><div class="input-with-action"><input id="apiKeyInput" name="apiKey" type="password" placeholder="Paste your API key…" autocomplete="off"><button class="input-action" id="toggleKeyVisibility" type="button" aria-label="Show API key">SHOW</button></div><small>Stored in this browser only. Never paste your key into AGENTS.md or other prompt files.</small></label>
           <label class="toggle-row"><span><strong>Remember API key on this device</strong><small>Off = session only. On = saved in this browser until you clear it.</small></span><input class="switch" id="rememberKey" type="checkbox"></label>
-          <div class="connection-actions"><button class="primary-btn" id="saveConnectionBtn">Save connection</button><button class="secondary-btn" id="testConnectionBtn">Test connection</button><button class="subtle-btn" id="clearApiKeyBtn">Clear key</button></div>
-          <div class="test-result" id="connectionResult" hidden></div>
-          <div class="notice-box"><span class="notice-icon"><svg aria-hidden="true" class="ico"><use href="#i-info"></use></svg></span><p><strong>Browser-side API access.</strong> Anyone who can use this page can enter their own key. Your key stays in your browser storage and is sent only to the configured API endpoint (through this site's same-origin proxy for the default TokenJuice URL). Don't use this as a public shared kiosk.</p></div>
+          <div class="connection-actions"><button class="primary-btn" id="saveConnectionBtn" type="button">Save connection</button><button class="secondary-btn" id="testConnectionBtn" type="button">Test connection</button><button class="subtle-btn" id="clearApiKeyBtn" type="button">Clear key</button></div>
+          <div class="test-result" id="connectionResult" role="status" aria-live="polite" hidden></div>
+          <div class="notice-box"><svg aria-hidden="true" class="ico"><use href="#i-info"></use></svg><p><strong>Browser-side API access.</strong> Anyone who can use this page can enter their own key. Your key stays in browser storage and is sent only to the configured API endpoint (through this site's same-origin proxy for the default TokenJuice URL). Don't use this as a public shared kiosk.</p></div>
         </div>
+
         <div class="settings-page" data-settings-page="model" hidden>
           <div class="section-intro"><h3>Model configuration</h3><p>Choose the model and control how much reasoning it uses.</p></div>
-          <label class="field field-full"><span>Model ID</span><input id="modelInput" value="deepseek-ai/DeepSeek-V4.1-Flash-1017" spellcheck="false"><small>Sent exactly as entered in the API request.</small></label>
+          <label class="field field-full"><span>Model ID</span><input id="modelInput" name="model" autocomplete="off" value="deepseek-ai/DeepSeek-V4.1-Flash-1017" spellcheck="false"><small>Sent exactly as entered in the API request.</small></label>
           <div class="field-grid"><label class="field"><span>Maximum output tokens</span><select id="maxTokensInput"><option value="2048">2,048</option><option value="4096" selected>4,096</option><option value="8192">8,192</option><option value="16384">16,384</option><option value="32768">32,768</option></select></label><label class="field"><span>Top P</span><select id="topPInput"><option value="0.95" selected>0.95 · recommended</option><option value="1">1.0</option></select></label></div>
           <div class="effort-settings"><div class="effort-settings-heading"><div><span class="card-kicker">THINKING MODE</span><h3>Reasoning effort</h3></div><span class="effort-current" id="settingsEffortValue">HIGH</span></div>
-            <div class="effort-options" id="settingsEffortOptions"><button data-effort-setting="none"><strong>Off</strong><small>Fast, direct response</small></button><button data-effort-setting="low"><strong>Low</strong><small>Quick reasoning</small></button><button data-effort-setting="high" class="active"><strong>High</strong><small>More capable reasoning</small></button><button data-effort-setting="max"><strong>Max</strong><small>Maximum effort</small></button></div>
-            <p class="field-help">Uses DeepSeek's documented <code>thinking</code> and <code>reasoning_effort</code> request fields. Thinking is enabled by default; effort options are low, high, or max.</p>
+            <div class="effort-options" id="settingsEffortOptions"><button type="button" data-effort-setting="none"><strong>Off</strong><small>Fast, direct response</small></button><button type="button" data-effort-setting="low"><strong>Low</strong><small>Quick reasoning</small></button><button type="button" data-effort-setting="high" class="active"><strong>High</strong><small>More capable reasoning</small></button><button type="button" data-effort-setting="max"><strong>Max</strong><small>Maximum effort</small></button></div>
+            <p class="field-help">Uses the model provider's thinking and reasoning-effort request fields. Changes apply to the next message.</p>
           </div>
           <label class="toggle-row"><span><strong>Stream responses</strong><small>Display the answer as it is generated.</small></span><input class="switch" id="streamToggle" type="checkbox" checked></label>
           <div class="settings-footer-note">Changes apply to the next request.</div>
         </div>
+
         <div class="settings-page" data-settings-page="appearance" hidden>
-          <div class="section-intro"><h3>Appearance</h3><p>A true black canvas with neutral contrast and no accent colors.</p></div>
-          <div class="appearance-block"><div class="field-label">INTERFACE</div><div class="accent-options" id="accentOptions"><button class="accent-choice active" data-accent="mono" aria-label="Monochrome"><i></i></button><span class="field-help">OLED black · monochrome</span></div></div>
+          <div class="section-intro"><h3>Appearance</h3><p>A focused monochrome interface. No bright accents competing with your work.</p></div>
+          <div class="appearance-block"><div class="field-label">INTERFACE</div><div class="accent-options" id="accentOptions"><button class="accent-choice active" type="button" data-accent="mono" aria-label="Monochrome"><i></i></button><span class="field-help">OLED black · monochrome</span></div></div>
           <label class="toggle-row"><span><strong>Compact conversation layout</strong><small>Reduce spacing between messages.</small></span><input class="switch" id="compactToggle" type="checkbox"></label>
           <label class="toggle-row"><span><strong>Enter sends message</strong><small>Use Shift + Enter for a new line.</small></span><input class="switch" id="enterSendsToggle" type="checkbox" checked></label>
         </div>
+
         <div class="settings-page" data-settings-page="data" hidden>
-          <div class="section-intro"><h3>Data & privacy</h3><p>Your workspace is local-first. Nothing syncs to a kernel account because there isn't one.</p></div>
-          <div class="data-action-row"><div><strong>Export workspace</strong><small>Download chats, preferences, and agent files as JSON.</small></div><button class="secondary-btn" id="exportAllBtn">Export JSON</button></div>
-          <div class="data-action-row"><div><strong>Import workspace</strong><small>Restore a previous kernel JSON export.</small></div><button class="secondary-btn" id="importAllBtn">Import JSON</button></div>
-          <div class="data-action-row"><div><strong>Export agent files</strong><small>Download the editable Markdown files.</small></div><button class="secondary-btn" id="dataExportFilesBtn">Export .md</button></div>
-          <div class="danger-zone"><div><strong>Clear local workspace</strong><small>Delete all conversations, settings, and agent files from this browser. This can't be undone.</small></div><button class="danger-btn" id="clearWorkspaceBtn">Clear data</button></div>
-          <div class="notice-box"><span class="notice-icon">⌑</span><p>Conversation history, preferences, and agent files are stored in this browser's local storage. API requests go to the provider you configured. Avoid storing sensitive personal information in prompts.</p></div>
+          <div class="section-intro"><h3>Data & privacy</h3><p>Your workspace is local-first. Nothing syncs to a Kernel account because there isn't one.</p></div>
+          <div class="data-action-row"><div><strong>Export workspace</strong><small>Download chats, preferences, and agent files as JSON.</small></div><button class="secondary-btn" id="exportAllBtn" type="button">Export JSON</button></div>
+          <div class="data-action-row"><div><strong>Import workspace</strong><small>Restore a previous Kernel JSON export.</small></div><button class="secondary-btn" id="importAllBtn" type="button">Import JSON</button></div>
+          <div class="data-action-row"><div><strong>Export agent files</strong><small>Download the editable Markdown files.</small></div><button class="secondary-btn" id="dataExportFilesBtn" type="button">Export .md</button></div>
+          <div class="danger-zone"><div><strong>Clear local workspace</strong><small>Delete all conversations, settings, and agent files from this browser. This can't be undone.</small></div><button class="danger-btn" id="clearWorkspaceBtn" type="button">Clear data</button></div>
+          <div class="notice-box"><svg aria-hidden="true" class="ico"><use href="#i-info"></use></svg><p>Conversation history, preferences, and agent files are stored in this browser's local storage. API requests go to the provider you configured. Avoid storing sensitive personal information in prompts.</p></div>
         </div>
       </div>
     </section>
   </div>
-  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
-  <div class="command-backdrop" id="commandBackdrop" hidden><div class="command-palette"><div class="command-input"><span>⌕</span><input id="commandInput" type="text" placeholder="Type a command…" autocomplete="off" aria-label="Search commands"><kbd>ESC</kbd></div><div class="command-list" id="commandList"></div><div class="command-foot">KERNEL COMMANDS <span>↑ ↓ navigate · ↵ select</span></div></div></div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+  <div class="command-backdrop" id="commandBackdrop" hidden>
+    <section class="command-palette" role="dialog" aria-modal="true" aria-label="Kernel commands">
+      <div class="command-input"><svg aria-hidden="true" class="ico"><use href="#i-search"></use></svg><input id="commandInput" type="search" placeholder="Type a command…" autocomplete="off" aria-label="Search commands"><kbd>ESC</kbd></div>
+      <div class="command-list" id="commandList"></div>
+      <div class="command-foot"><span>KERNEL COMMANDS</span><span>↑ ↓ navigate · ↵ select</span></div>
+    </section>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/highlight.min.js" crossorigin="anonymous" defer onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/highlight.js@11.12.0/build/highlight.min.js'"></script>
   <script type="module" src="./src/main.js"></script>
 </body>
