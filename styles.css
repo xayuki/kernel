@@ -750,7 +750,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .entry-intro { width: min(100%, 620px); }
 .entry-intro h1 {
   margin: 20px 0 18px;
-  font-size: clamp(2.8rem, 12vw, 4.6rem);
+  font-size: clamp(2.65rem, 12.5vw, 3.3rem);
 }
 .entry-lede { font-size: 16px; }
 .entry-details { grid-template-columns: minmax(0,1fr); margin-top: 29px; }
@@ -771,13 +771,13 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .sidebar-close { display: inline-grid; }
 .side-top { margin-bottom: 14px; }
 .mobile-menu { display: inline-grid; }
-.topbar { height: 58px; min-height: 58px; padding: 0 8px; }
+.topbar { height: 58px; min-height: 58px; padding: 0 6px; }
 .topbar-left, .topbar-right { gap: 3px; }
-.crumb { max-width: 88px; gap: 6px; font-size: 11px; }
+.crumb { max-width: 74px; gap: 6px; font-size: 11px; }
 .crumb-muted, .crumb-slash { display: none; }
-.model-pill { max-width: 112px; min-height: 36px; padding: 0 7px; gap: 4px; font-size: 10px; }
+.model-pill { max-width: 97px; min-height: 36px; padding: 0 7px; gap: 4px; font-size: 10px; }
 .model-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.top-icon { width: 36px; height: 36px; }
+.top-icon { width: 34px; height: 34px; }
 
 .welcome { width: calc(100% - 30px); padding: 32px 0 23px; }
 .welcome-topline { align-items: flex-start; }
@@ -800,6 +800,8 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .composer-box { padding: 10px; }
 .composer-box textarea { min-height: 39px; font-size: 16px; }
 .composer-tool { min-height: 36px; padding: 0 7px; font-size: 10px; }
+.composer-tool span { display: none; }
+.composer-tool.effort-control span { display: inline; }
 .composer-tool .ico { width: 13px; height: 13px; }
 .composer-hint { display: none; }
 .send-btn { width: 38px; height: 38px; }
@@ -811,7 +813,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .message-content { font-size: 15px; }
 
 .page-view { padding: 28px 14px 34px; }
-.page-heading { align-items: flex-start; margin-bottom: 20px; }
+.page-heading { flex-direction: column; align-items: flex-start; margin-bottom: 20px; }
 .page-heading h2 { font-size: 30px; }
 .page-heading p { font-size: 13px; }
 .files-layout { grid-template-columns: minmax(0,1fr); gap: 8px; }
@@ -846,6 +848,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 }
 .settings-brand { padding: 0 4px 9px; font-size: 14px; }
 .settings-brand .brand-symbol { width: 21px; height: 21px; font-size: 12px; }
+.chat-rename-input { min-width: 0; flex: 1; }
 .settings-label, .settings-sidebar-bottom { display: none; }
 .settings-tab {
   display: inline-flex;
@@ -866,19 +869,6 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .command-backdrop { padding: 11vh 10px 0; }
 .command-foot { font-size: 8px; }
 
-/* Small-phone overflow guard: keep the header and composer within 320px. */
-@media (max-width: 380px) {
-  .topbar { padding-inline: 6px; }
-  .topbar-left, .topbar-right { gap: 1px; }
-  .crumb { max-width: 74px; }
-  .model-pill { max-width: 97px; }
-  .top-icon { width: 34px; height: 34px; }
-  .composer-tool span { display: none; }
-  .composer-tool.effort-control span { display: inline; }
-  .entry-intro h1 { font-size: clamp(2.65rem, 12.5vw, 3.3rem); }
-  .page-heading { flex-direction: column; }
-}
-
 /* Large phones and small tablets. */
 @media (min-width: 640px) {
   .entry-gate { padding-right: clamp(30px, 5vw, 84px); padding-left: clamp(30px, 5vw, 84px); }
@@ -889,6 +879,12 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
   .entry-footer span:last-child { display: inline; }
   .entry-layout { width: min(100%, 1230px); }
   .entry-intro h1 { font-size: clamp(3.4rem, 8vw, 5.2rem); }
+  .topbar { padding: 0 14px; }
+  .crumb { max-width: 150px; }
+  .model-pill { max-width: 145px; }
+  .top-icon { width: 38px; height: 38px; }
+  .composer-tool span { display: inline; }
+  .page-heading { flex-direction: row; }
   .welcome { width: min(100% - 38px, 920px); padding: 47px 0 34px; }
   .welcome-title-wrap { display: grid; grid-template-columns: minmax(0,1fr) minmax(190px,.48fr); align-items: end; gap: 30px; margin: 38px 0 40px; }
   .welcome h1 { font-size: clamp(3.4rem, 7.4vw, 5.2rem); }
