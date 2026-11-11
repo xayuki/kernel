@@ -1232,3 +1232,16 @@ input:focus, textarea:focus, select:focus, .markdown-editor:focus-visible {
     filter: none !important;
   }
 }
+
+
+/* Keep streaming markdown steady: animate the message container once, not each token repaint. */
+.topbar {
+  animation: kernelRise 1.1s var(--motion-slow) .08s both, kernelTextShimmer 18s ease-in-out infinite;
+}
+.message-content { animation: kernelRise 1.15s var(--motion-slow) both; }
+.message-content p,
+.message-content h1, .message-content h2, .message-content h3,
+.message-content blockquote, .message-content hr, .message-attachment,
+.message-media, .code-block {
+  animation: none;
+}
