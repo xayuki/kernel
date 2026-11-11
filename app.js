@@ -233,27 +233,44 @@ function switchView(view) {
   currentView = view;
   $('#chatStage').hidden = view !== 'chats'; $('#composerWrap').hidden = view !== 'chats';
   $('#filesView').hidden = view !== 'files'; $('#personalityView').hidden = view !== 'personality';
-  $$('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
+  $('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
   if (view === 'chats') showConversation();
   if (view === 'files') loadFileEditor();
   if (view === 'personality') syncPersonalityUI();
+  const activeSurface = view === 'files' ? $('#filesView') : view === 'personality' ? $('#personalityView') : $('#chatStage');
+  activeSurface.classList.remove('is-view-entering');
+  void activeSurface.offsetWidth;
+  activeSurface.classList.add('is-view-entering');
+  if (view === 'chats') {
+    $('#composerWrap').classList.remove('is-view-entering');
+    void $('#composerWrap').offsetWidth;
+    $('#composerWrap').classList.add('is-view-entering');
+  }
   $('#currentTitle').textContent = view === 'files' ? 'agent files' : view === 'personality' ? 'personality' : (activeChat()?.title || 'new conversation');
 }
-function showConversation() {
+function showConversation(options = {}) {
   const chat = activeChat();
   $('#currentTitle').textContent = chat?.title || 'new conversation';
   const hasMessages = Boolean(chat?.messages?.length);
   $('#welcomeView').hidden = hasMessages;
   $('#messages').hidden = !hasMessages;
   if (!hasMessages) { $('#messages').innerHTML = ''; }
-  else renderMessages();
+  else renderMessages(options);
   renderChatList();
   updateConnectionStatus();
 }
-function renderMessages() {
+function renderMessages(options = {}) {
   const chat = activeChat(); if (!chat) return;
+  const { revealMessageId = null, revealRecent = false } = options;
   const root = $('#messages'); root.innerHTML = '';
-  chat.messages.forEach((message, index) => root.append(createMessageElement(message, index)));
+  const recentStart = Math.max(0, chat.messages.length - 4);
+  chat.messages.forEach((message, index) => {
+    const article = createMessageElement(message, index);
+    root.append(article);
+    if (message.id === revealMessageId || (revealRecent && index >= recentStart)) {
+      queueMessageReveal(article, revealRecent ? index - recentStart : 0);
+    }
+  });
   scrollToBottom();
 }
 function createMessageElement(message, index) {
@@ -284,7 +301,12 @@ function createMessageElement(message, index) {
     for (const item of (message.attachments || []).filter(item => item.kind !== 'image')) {
       const label = document.createElement('div'); label.className = 'message-attachment'; label.textContent = `▤ ${item.name}`; content.append(label);
     }
-    if (message.content) { const markdown = document.createElement('div'); markdown.innerHTML = renderMarkdown(message.content); content.append(markdown); }
+    if (message.content) {
+      const markdown = document.createElement('div');
+      markdown.className = 'markdown-content';
+      markdown.innerHTML = renderMarkdown(message.content);
+      content.append(markdown);
+    }
   }
   body.append(content);
   if (!message.status) {
@@ -306,13 +328,43 @@ function createMessageElement(message, index) {
   article.append(body);
   return article;
 }
-function scrollToBottom() { const stage = $('#chatStage'); requestAnimationFrame(() => { stage.scrollTop = stage.scrollHeight; }); }
+function queueMessageReveal(article, sequence = 0) {
+  if (!article) return;
+  article.classList.remove('is-arriving');
+  article.style.setProperty('--sequence-delay', `${Math.max(0, sequence) * 150}ms`);
+  const body = $('.message-body', article);
+  const pieces = [
+    $('.message-meta', body),
+    $('.message-media', body),
+    $('.message-content', body),
+    $('.message-actions', body)
+  ].filter(Boolean);
+  pieces.forEach((element, index) => element.style.setProperty('--reveal-delay', `${index * 125}ms`));
+  Array.from(article.querySelectorAll('.message-image-preview, .message-attachment')).forEach((element, index) => element.style.setProperty('--asset-delay', `${index * 145}ms`));
+  Array.from(article.querySelectorAll('.markdown-content > *')).forEach((element, index) => element.style.setProperty('--asset-delay', `${index * 155}ms`));
+  requestAnimationFrame(() => article.classList.add('is-arriving'));
+}
+function scrollToBottom() {
+  const stage = $('#chatStage');
+  requestAnimationFrame(() => {
+    if (generationActive) stage.scrollTop = stage.scrollHeight;
+    else stage.scrollTo({ top: stage.scrollHeight, behavior: 'smooth' });
+  });
+}
 function updateStreamingMessage(message) {
   const root = $('#messages');
   let article = $(`[data-message-id="${CSS.escape(message.id)}"]`, root);
   if (!article) { article = createMessageElement(message, -1); root.append(article); }
+  article.classList.add('is-streaming');
   const content = $('.message-content', article);
-  content.innerHTML = renderMarkdown(message.content || '');
+  let markdown = $('.markdown-content', content);
+  if (!markdown) {
+    content.innerHTML = '';
+    markdown = document.createElement('div');
+    markdown.className = 'markdown-content is-streaming';
+    content.append(markdown);
+  }
+  markdown.innerHTML = renderMarkdown(message.content || '');
   scrollToBottom();
 }
 function editMessage(id) {
@@ -418,7 +470,10 @@ async function readStreamingResponse(response, assistantMessage, chat) {
       else if (Array.isArray(delta?.content)) assistantMessage.content += delta.content.map(part => part.text || '').join('');
       const finish = chunk.choices?.[0]?.finish_reason;
       if (chunk.usage) assistantMessage.usage = chunk.usage;
-      if (delta?.content) { updateStreamingMessage(assistantMessage); }
+      if (delta?.content) {
+        assistantMessage.status = '';
+        updateStreamingMessage(assistantMessage);
+      }
       if (finish) assistantMessage.finishReason = finish;
     }
     if (generationActive && assistantMessage.content && !$('#messages').querySelector(`[data-message-id="${CSS.escape(assistantMessage.id)}"]`)) updateStreamingMessage(assistantMessage);
@@ -436,7 +491,7 @@ async function generateAssistantReply() {
   const assistant = { id: uid(), role: 'assistant', content: '', createdAt: now(), status: 'thinking' };
   chat.messages.push(assistant); generationActive = true; abortController = new AbortController();
   $('#sendBtn').disabled = false; $('#sendGlyph').textContent = '■'; $('#sendBtn').title = 'Stop generating';
-  renderMessages();
+  renderMessages({ revealMessageId: assistant.id });
   try {
     const response = await fetch(apiEndpoint(), {
       method: 'POST',
@@ -445,12 +500,11 @@ async function generateAssistantReply() {
       signal: abortController.signal
     });
     if (!response.ok) throw new Error(parseApiError(await response.text(), response.status));
-    assistant.status = '';
     if (settings.stream && response.body) {
-      updateStreamingMessage(assistant);
       await readStreamingResponse(response, assistant, chat);
     } else {
       const data = await response.json();
+      assistant.status = '';
       assistant.content = data.choices?.[0]?.message?.content || 'The model returned an empty message. Try again or switch thinking effort.';
       assistant.usage = data.usage;
     }
@@ -464,7 +518,7 @@ async function generateAssistantReply() {
     }
   } finally {
     generationActive = false; abortController = null; assistant.status = '';
-    chat.updatedAt = now(); persistChats(); renderMessages(); renderChatList();
+    chat.updatedAt = now(); persistChats(); renderMessages({ revealMessageId: assistant.id }); renderChatList();
     $('#sendGlyph').innerHTML = '<svg class="ico"><use href="#i-arrow-up"></use></svg>';  $('#sendBtn').title = 'Send message';
     $('#sendBtn').disabled = !$('#promptInput').value.trim() && !stagedAttachments.length;
   }
@@ -481,13 +535,14 @@ async function sendMessage() {
   if (chat.messages.filter(m => m.role === 'user').length === 1) chat.title = chatTitleFrom(text || attachments[0]?.name || 'Image');
   chat.updatedAt = now();
   $('#promptInput').value = ''; $('#promptInput').style.height = 'auto'; stagedAttachments = []; renderStagedAttachments();
-  persistChats(); showConversation(); await generateAssistantReply();
+  persistChats(); showConversation({ revealMessageId: message.id }); await generateAssistantReply();
 }
 function setEffort(value) {
   if (!['none', 'low', 'high', 'max'].includes(value)) return;
   settings.effort = value; persistSettings(); updateEffortUI(); $('#effortMenu').hidden = true;
 }
 function openSettings(tab = 'connection') {
+  $('#settingsBackdrop').classList.remove('is-closing');
   $('#settingsBackdrop').hidden = false;
   $('#baseUrlInput').value = settings.baseUrl || DEFAULT_BASE;
   $('#apiKeyInput').value = '';
@@ -501,7 +556,15 @@ function openSettings(tab = 'connection') {
   $('#connectionResult').hidden = true;
   switchSettingsTab(tab);
 }
-function closeSettings() { $('#settingsBackdrop').hidden = true; }
+function closeSettings() {
+  const backdrop = $('#settingsBackdrop');
+  if (backdrop.hidden || backdrop.classList.contains('is-closing')) return;
+  backdrop.classList.add('is-closing');
+  window.setTimeout(() => {
+    backdrop.hidden = true;
+    backdrop.classList.remove('is-closing');
+  }, 320);
+}
 function switchSettingsTab(tab) {
   $$('.settings-tab').forEach(button => button.classList.toggle('active', button.dataset.settingsTab === tab));
   $$('.settings-page').forEach(page => { const active = page.dataset.settingsPage === tab; page.classList.toggle('active', active); page.hidden = !active; });
@@ -556,13 +619,28 @@ async function testConnection() {
 }
 
 function enterWorkspace() {
-  $('#entryGate').hidden = true;
-  $('#appShell').hidden = false;
+  const gate = $('#entryGate');
+  const shell = $('#appShell');
   $('#entryApiKey').value = '';
   document.documentElement.dataset.kernelAuth = 'true';
-  if (activeChatId) showConversation();
+
+  gate.classList.add('is-leaving');
+  shell.hidden = false;
+  shell.classList.remove('workspace-arriving');
+  void shell.offsetWidth;
+  requestAnimationFrame(() => shell.classList.add('workspace-arriving'));
+
+  if (activeChatId) showConversation({ revealRecent: true });
   else switchView('chats');
-  requestAnimationFrame(() => $('#promptInput')?.focus());
+
+  window.setTimeout(() => {
+    gate.hidden = true;
+    gate.classList.remove('is-leaving');
+  }, 1250);
+  window.setTimeout(() => {
+    shell.classList.remove('workspace-arriving');
+    $('#promptInput')?.focus();
+  }, 1650);
 }
 
 async function connectFromEntry() {
@@ -596,7 +674,7 @@ async function connectFromEntry() {
   if (connected) {
     status.dataset.state = 'success';
     status.textContent = 'Connected. Opening your workspace…';
-    window.setTimeout(enterWorkspace, 350);
+    window.setTimeout(enterWorkspace, 650);
   } else {
     const detail = $('#connectionResult').textContent || 'Check your key and provider settings, then try again.';
     status.dataset.state = 'error';
@@ -696,9 +774,21 @@ async function copyText(text, successMessage = 'Copied to clipboard.') {
   }
 }
 function openCommandPalette() {
-  $('#commandBackdrop').hidden = false; $('#commandInput').value = ''; renderCommandList(''); $('#commandInput').focus();
+  $('#commandBackdrop').classList.remove('is-closing');
+  $('#commandBackdrop').hidden = false;
+  $('#commandInput').value = '';
+  renderCommandList('');
+  $('#commandInput').focus();
 }
-function closeCommandPalette() { $('#commandBackdrop').hidden = true; }
+function closeCommandPalette() {
+  const backdrop = $('#commandBackdrop');
+  if (backdrop.hidden || backdrop.classList.contains('is-closing')) return;
+  backdrop.classList.add('is-closing');
+  window.setTimeout(() => {
+    backdrop.hidden = true;
+    backdrop.classList.remove('is-closing');
+  }, 320);
+}
 function renderCommandList(query) {
   const commands = [
     ['＋', 'New chat', 'new-chat', 'Ctrl K'], ['⚙', 'Open settings', 'settings', 'Ctrl ,'], ['◫', 'Go to chats', 'chats', ''], ['⌘', 'Open agent files', 'files', ''], ['◈', 'Customize personality', 'personality', ''], ['⇩', 'Export workspace', 'export', ''], ['✳', 'Set reasoning effort', 'effort', '']
@@ -843,8 +933,13 @@ applyAppearance(); updateEffortUI(); updateConnectionStatus(); renderChatList();
 const hasSavedKey = Boolean(currentKey());
 $('#entryGate').hidden = hasSavedKey;
 $('#appShell').hidden = !hasSavedKey;
-if (hasSavedKey && activeChatId) showConversation();
-else if (!hasSavedKey) requestAnimationFrame(() => $('#entryApiKey').focus());
+if (hasSavedKey) {
+  if (activeChatId) showConversation({ revealRecent: true });
+  requestAnimationFrame(() => $('#appShell').classList.add('workspace-arriving'));
+  window.setTimeout(() => $('#appShell').classList.remove('workspace-arriving'), 1650);
+} else {
+  requestAnimationFrame(() => $('#entryApiKey').focus());
+}
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
