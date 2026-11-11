@@ -381,8 +381,6 @@ kbd {
 }
 
 /* Workspace frame */
-html[data-kernel-auth="true"] #entryGate { display: none !important; }
-html[data-kernel-auth="true"] #appShell { display: grid !important; }
 #appShell[hidden] { display: none !important; }
 .app-shell {
   display: grid;
@@ -1145,7 +1143,6 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; }
 .entry-feature:nth-child(3) { animation: pieceIn .48s var(--ease-settle) .44s both; }
 #entryGate.is-leaving { position: fixed; z-index: 100; inset: 0; pointer-events: none; animation: gateOut .72s var(--ease-settle) both; }
 .app-shell.workspace-arriving { animation: workspaceIn .78s var(--ease-settle) both; }
-.workspace-arriving .sidebar { animation: sidebarIn .58s var(--ease-settle) .06s both; }
 .workspace-arriving .topbar { animation: pieceIn .5s var(--ease-settle) .13s both; }
 .workspace-arriving .chat-stage, .workspace-arriving .page-view { animation: pieceIn .58s var(--ease-settle) .2s both; }
 .workspace-arriving .welcome h1 { animation: pieceIn .58s var(--ease-settle) .3s both; }
@@ -1200,6 +1197,7 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; }
   .entry-card-wrap { margin-left: auto; }
   .app-shell { grid-template-columns: var(--sidebar-width) minmax(0, 1fr); }
   .sidebar { position: relative; width: auto; height: 100dvh; transform: none; box-shadow: none; }
+  .workspace-arriving .sidebar { animation: sidebarIn .58s var(--ease-settle) .06s both; }
   .sidebar-close, .mobile-menu { display: none; }
   .sidebar-collapse { display: inline-grid; }
   .app-shell.sidebar-collapsed { grid-template-columns: 76px minmax(0, 1fr); }
