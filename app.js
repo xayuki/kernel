@@ -237,15 +237,15 @@ function chatMenu(id) {
     event.stopPropagation();
     menu.remove();
     closeListeners();
-    const title = $('.chat-title', row);
-    if (!title) return;
+    const openButton = $('.chat-open', row);
+    if (!openButton) return;
     const input = document.createElement('input');
     input.className = 'chat-rename-input';
     input.type = 'text';
     input.maxLength = 90;
     input.value = chat.title;
     input.setAttribute('aria-label', 'Rename conversation');
-    title.replaceWith(input);
+    openButton.replaceWith(input);
     let finished = false;
     const finish = save => {
       if (finished) return;
