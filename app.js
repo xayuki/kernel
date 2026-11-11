@@ -339,9 +339,9 @@ function queueMessageReveal(article, sequence = 0) {
     $('.message-content', body),
     $('.message-actions', body)
   ].filter(Boolean);
-  pieces.forEach((element, index) => element.style.setProperty('--reveal-index', index));
-  $('.message-image-preview, .message-attachment', article).forEach((element, index) => element.style.setProperty('--asset-index', index));
-  $('.markdown-content > *', article).forEach((element, index) => element.style.setProperty('--asset-index', index));
+  pieces.forEach((element, index) => element.style.setProperty('--reveal-delay', `${index * 125}ms`));
+  $('.message-image-preview, .message-attachment', article).forEach((element, index) => element.style.setProperty('--asset-delay', `${index * 145}ms`));
+  $('.markdown-content > *', article).forEach((element, index) => element.style.setProperty('--asset-delay', `${index * 155}ms`));
   requestAnimationFrame(() => article.classList.add('is-arriving'));
 }
 function scrollToBottom() {
