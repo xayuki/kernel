@@ -1,0 +1,14 @@
+{
+  "release-type": "node",
+  "packages": {
+    ".": {
+      "package-name": "kernel"
+    }
+  },
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Fixes" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "docs", "section": "Documentation" }
+  ]
+}
