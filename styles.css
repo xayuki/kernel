@@ -1022,18 +1022,18 @@ button:active:not(:disabled), .message-image-preview:active { transform: transla
 .message.is-arriving .message-actions {
   opacity: 0;
   animation: chatPieceEnter .78s var(--ease-spring) both;
-  animation-delay: calc(var(--sequence-delay, 0ms) + 100ms + var(--reveal-index, 0) * 120ms);
+  animation-delay: calc(var(--sequence-delay, 0ms) + 100ms + var(--reveal-delay, 0ms));
 }
 .message.is-arriving .markdown-content > * {
   opacity: 0;
   animation: chatPieceEnter .84s var(--ease-spring) both;
-  animation-delay: calc(var(--sequence-delay, 0ms) + 320ms + var(--asset-index, 0) * 155ms);
+  animation-delay: calc(var(--sequence-delay, 0ms) + 320ms + var(--asset-delay, 0ms));
 }
 .message.is-arriving .message-image-preview,
 .message.is-arriving .message-attachment {
   opacity: 0;
   animation: chatPieceEnter .86s var(--ease-spring) both;
-  animation-delay: calc(var(--sequence-delay, 0ms) + 260ms + var(--asset-index, 0) * 145ms);
+  animation-delay: calc(var(--sequence-delay, 0ms) + 260ms + var(--asset-delay, 0ms));
 }
 .message-content { overflow-wrap: anywhere; }
 .message-content .markdown-content > * { transform-origin: left center; }
