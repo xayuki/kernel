@@ -2,7 +2,7 @@
   "name": "kernel",
   "private": false,
   "engines": {
-    "node": ">=20.19.0"
+    "node": "22.x"
   },
   "version": "0.2.0",
   "type": "module",
