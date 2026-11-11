@@ -28,6 +28,8 @@
 }
 
 * { box-sizing: border-box; }
+.hidden { display: none !important; }
+html[data-kernel-auth="true"] #entryGate { display: none !important; }
 html, body { width: 100%; min-height: 100%; margin: 0; }
 html { background: var(--bg); scroll-behavior: smooth; }
 body {
@@ -192,6 +194,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; }
 .connect-button:disabled { opacity: .62; }
 .connect-button .ico { width: 16px; height: 16px; }
 .connect-button .spinner { display: none; animation: spin 1s linear infinite; }
+.connect-button .spinner:not(.hidden) { display: block; }
 .connect-button:has(+ .entry-status[data-state="loading"]) .spinner { display: block; }
 .entry-status { padding: 11px 13px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-soft); font-size: 12px; line-height: 1.55; }
 .entry-status[data-state="loading"] { border-color: var(--border-strong); background: rgba(255,255,255,.04); }
