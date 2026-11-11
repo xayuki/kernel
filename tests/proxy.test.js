@@ -1,14 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PassThrough, Readable } from 'node:stream';
-import handler from '../api/tokenjuice/[...path].js';
+import { createTokenJuiceHandler } from '../lib/tokenjuice-proxy.js';
 
-function makeRequest({ method = 'POST', path = ['chat', 'completions'], origin = 'https://kernel.example', host = 'kernel.example', body = '{"model":"test"}', authorization = 'Bearer test-key' } = {}) {
+function makeRequest({
+  method = 'POST',
+  origin = 'https://kernel.example',
+  host = 'kernel.example',
+  body = '{"model":"test"}',
+  authorization = 'Bearer test-key'
+} = {}) {
   const req = Readable.from(method === 'GET' || method === 'OPTIONS' ? [] : [Buffer.from(body)]);
   req.method = method;
-  req.url = `/api/tokenjuice/${Array.isArray(path) ? path.join('/') : path}`;
-  req.query = { path };
-  req.headers = { origin, host, authorization, accept: 'text/event-stream', 'content-type': 'application/json' };
+  req.url = '/api/tokenjuice/chat/completions';
+  req.headers = {
+    origin,
+    host,
+    authorization,
+    accept: 'text/event-stream',
+    'content-type': 'application/json'
+  };
   return req;
 }
 
@@ -27,29 +38,35 @@ function makeResponse() {
 }
 
 test('rejects cross-origin requests', async () => {
+  const handler = createTokenJuiceHandler('chat/completions');
   const res = makeResponse();
   await handler(makeRequest({ origin: 'https://attacker.example' }), res);
   assert.equal(res.statusCode, 403);
   assert.match(await res.text(), /Cross-origin/);
 });
 
-test('rejects paths outside the fixed allowlist', async () => {
+test('rejects requests without a valid bearer token', async () => {
+  const handler = createTokenJuiceHandler('chat/completions');
   const res = makeResponse();
-  await handler(makeRequest({ path: ['admin', 'secrets'] }), res);
-  assert.equal(res.statusCode, 404);
+  await handler(makeRequest({ authorization: 'not-a-token' }), res);
+  assert.equal(res.statusCode, 401);
+  assert.match(await res.text(), /Bearer API key/);
 });
 
-test('rejects wrong methods for a supported route', async () => {
+test('rejects wrong methods for the chat completions route', async () => {
+  const handler = createTokenJuiceHandler('chat/completions');
   const res = makeResponse();
-  await handler(makeRequest({ method: 'GET', path: ['chat', 'completions'] }), res);
+  await handler(makeRequest({ method: 'GET' }), res);
   assert.equal(res.statusCode, 405);
 });
 
 test('forwards auth and streams the upstream response', async () => {
+  const handler = createTokenJuiceHandler('chat/completions');
   const originalFetch = globalThis.fetch;
   let forwardedAuthorization = '';
   let forwardedUrl = '';
   let forwardedBody = '';
+
   globalThis.fetch = async (url, init) => {
     forwardedUrl = String(url);
     forwardedAuthorization = init.headers.get('authorization');
@@ -76,4 +93,11 @@ test('forwards auth and streams the upstream response', async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('models route only accepts GET', async () => {
+  const handler = createTokenJuiceHandler('models');
+  const res = makeResponse();
+  await handler(makeRequest({ method: 'POST' }), res);
+  assert.equal(res.statusCode, 405);
 });
